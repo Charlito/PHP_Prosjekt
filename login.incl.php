@@ -2,7 +2,7 @@
 
 include 'dbconnect.incl.php';
 
-function login() {
+if(isset($_POST['login'])){
     $con = connect();
     
     $epost = real_escape_string($_POST['epost']);
