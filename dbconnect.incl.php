@@ -5,7 +5,7 @@ function connect() {
     $user = "root";
     $db_name = "MOOC";
     $con = mysqli_connect($host, $user) or die("Cannot connect to host: " . mysqli_error($con));
-    mysqli_select_db($db_name) or die("Cannot connect to Database: " . mysqli_error($con));
+    mysqli_select_db($con, $db_name) or die("Cannot connect to Database: " . mysqli_error($con));
     return $con;
 }
 

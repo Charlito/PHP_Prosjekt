@@ -5,12 +5,12 @@ include 'dbconnect.incl.php';
 function login() {
     $con = connect();
     
-    $epost = real_escape_string($_POST['epost']);
-    $pw = crypt(real_escape_string($_POST['passord']));
+    $epost = ($_POST['epost']);
+    $pw = crypt($_POST['passord']);
+    echo $epost;
     echo $pw;
     
-    $query = "SELECT brukerID FROM brukere WHERE epost = ? AND passord = ?";
-    
+    $query = "SELECT brukerID FROM brukere WHERE email=? AND passord=?";
     $statement = $con->prepare($query);
     $statement->bind_param("ss", $epost, $pw);
     $statement->execute();
@@ -18,6 +18,7 @@ function login() {
     $statement->bind_result($brukerID);
     
     if ($statement->num_rows == 1) {
+        
         session_start();
         $_SESSION['brukerID'] = $brukerID;
         if (disconnect($con)) {
