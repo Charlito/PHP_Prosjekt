@@ -6,7 +6,7 @@
     </head>
     <body>
         <?php
-        // put your code here
+        //TODO: if innlogga: redirect til todo; else redirect til login
         ?>
     </body>
 </html>
