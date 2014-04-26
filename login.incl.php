@@ -6,7 +6,7 @@ function login() {
     $con = connect();
     
     $epost = ($_POST['epost']);
-    $pw = crypt($_POST['passord']);
+    $pw = hash('sha256', $_POST['passord']);
     echo $epost;
     echo $pw;
     
@@ -18,7 +18,6 @@ function login() {
     $statement->bind_result($brukerID);
     
     if ($statement->num_rows == 1) {
-        
         session_start();
         $_SESSION['brukerID'] = $brukerID;
         if (disconnect($con)) {
