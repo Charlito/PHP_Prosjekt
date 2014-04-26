@@ -8,7 +8,7 @@
     <body>
         <form method="POST" action="login()">
             <label for="epost">Epost: </label>
-            <input type="text" name="epost"><br>
+            <input type="email" name="epost"><br>
             
             <label for="passord">Passord</label> 
             <input type="password" name="passord"><br>
