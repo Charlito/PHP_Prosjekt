@@ -6,7 +6,11 @@
     </head>
     <body>
         <?php
-        //TODO: if innlogga: redirect til todo; else redirect til login
+        if (isset($_SESSION['brukerID'])) {
+            header('Location: /PHP_Prosjekt/todo.php');
+        } else {
+            header('Location: /PHP_Prosjekt/login.php');
+        }
         ?>
     </body>
 </html>

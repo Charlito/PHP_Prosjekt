@@ -7,8 +7,7 @@ function login() {
     
     $epost = ($_POST['epost']);
     $pw = hash('sha256', $_POST['passord']);
-    echo $epost;
-    echo $pw;
+    echo $epost . '<br />' . $pw;
     
     $query = "SELECT brukerID FROM brukere WHERE email=? AND passord=?";
     $statement = $con->prepare($query);
@@ -21,10 +20,10 @@ function login() {
         session_start();
         $_SESSION['brukerID'] = $brukerID;
         if (disconnect($con)) {
-            header('Location: /PHP_Prosjekt/index.php');
+            header('Location: ./index.php');
         }
     } else {
-        echo 'Feil brukernavn eller passord.';
+        echo '<br /><strong>Feil brukernavn eller passord.</strong>';
     }
 }
 
