@@ -2,7 +2,7 @@
 
 include 'dbconnect.incl.php';
 
-if(isset($_POST['login'])){
+function login() {
     $con = connect();
     
     $epost = real_escape_string($_POST['epost']);
@@ -27,3 +27,4 @@ if(isset($_POST['login'])){
         echo 'Feil brukernavn eller passord.';
     }
 }
+
