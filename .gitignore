@@ -1,1 +1,3 @@
 *.properties
+nbproject/private/private.properties
+*.properties

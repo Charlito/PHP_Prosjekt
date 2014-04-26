@@ -10,8 +10,14 @@ and open the template in the editor.
         <title></title>
     </head>
     <body>
-        <?php
-        // put your code here
-        ?>
+        <form>
+            <label for="epost">Epost: </label>
+            <input type="text" name="epost"><br>
+            
+            <label for="passord">Passord</label> 
+            <input type="password" name="passord"><br>
+            
+            <input type="submit" value="Logg inn">
+        </form>
     </body>
 </html>
