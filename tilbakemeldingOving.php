@@ -3,7 +3,8 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title></title>
+        <title>Tilbakemelding</title>
+        <link rel="stylesheet" href="stilark.css" />
     </head>
     <body>
         <?php

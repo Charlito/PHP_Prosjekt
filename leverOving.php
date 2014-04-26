@@ -7,7 +7,8 @@ and open the template in the editor.
 <html>
     <head>
         <meta charset="UTF-8">
-        <title></title>
+        <title>Innlevering</title>
+        <link rel="stylesheet" href="stilark.css" />
     </head>
     <body>
         <form>
