@@ -17,7 +17,7 @@ function leggTilBruker() {
     if ($passord != $passordsjekk) {
         return false;
     }
-    $pw = hash("sha512", salt() . $_POST['passord']);
+    $pw = hash("sha512", salt() . $passord);
     $navn = $_POST['navn'];
     $rolle = $_POST['rolle'];
 
@@ -34,14 +34,16 @@ function leggTilBruker() {
 function leggTilOving() {
     $con = connect();
 
+    $navn = $_POST['navn'];
     $oppgavetekst = $_POST['oppgavetekst'];
     // Må være på formen YYYY-MM-DD
     $innleveringsfrist = $_POST['innleveringsfrist'];
     $obligatorisk = $_POST['obligatorisk'];
 
-    $query = "INSERT INTO ovinger VALUES(DEFAULT,?,?,?)";
+    $query = "INSERT INTO ovinger VALUES(DEFAULT,?,?,?,?)";
     $statement = $con->prepare($query);
-    $statement->bind_param("ssb", $oppgavetekst, $innleveringsfrist, $obligatorisk);
+    // OBS! Sjekk at databasen aksepterer en int som boolean-input.
+    $statement->bind_param("sssi", $navn, $oppgavetekst, $innleveringsfrist, $obligatorisk);
     $statement->execute();
 
     if (disconnect($con) && $statement->close()) {
@@ -73,11 +75,10 @@ function leverTilbakemelding() {
     $ovingsID = $_POST['ovingsID'];
     $vurderingsbruker = $_POST['vurderingsbruker'];
     $tilbakemelding = $_POST['tilbakemelding'];
-    $nytteverdi = $_POST['nytteverdi'];
 
-    $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,))";
+    $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,DEFAULT))";
     $statement = $con->prepare($query);
-    $statement->bind_param("iiisi", $brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding, $nytteverdi);
+    $statement->bind_param("iiisi", $brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding);
     $statement->execute();
 
     if (disconnect($con) && $statement->close()) {
@@ -100,3 +101,35 @@ function godkjennOving() {
         return true;
     }
 }
+
+function getOvinger() {
+    $con = connect();
+    
+    $query = "SELECT * FROM ovinger ORDER BY innleveringsfrist";
+    $result = mysqli_query($con, $query);
+    while ($array = mysqli_fetch_assoc($result)) {
+        $utskrift = "<tr><td colspan='5' id='" . $array['ovingsID'] . "'";
+        if ($array['obligatorisk']) {
+            $utskrift = $utskrift . " class=obligatorisk";
+        }
+        $utskrift = $utskrift . "><a href='visOving.php?id=" . $array['ovingsID'] . "'>" . $array['navn'] . "</a></td></tr>";
+        echo $utskrift;
+    }
+}
+
+function getInnleveringer() {
+    $con = connect();
+    
+    $brukerID = $_POST['brukerID'];
+    $ovingsID = $_POST['ovingsID'];
+    
+    $query = "SELECT * FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
+    $statement = $con->prepare($query);
+    $statement->bind_param("ii", $brukerID, $ovingsID);
+    if ($statement->execute()) {
+        while ($row = $statement->fetch()) {
+            print_r($row);
+        }
+    }
+}
+

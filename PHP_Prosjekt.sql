@@ -7,14 +7,16 @@ CREATE TABLE brukere(
 brukerID INT AUTO_INCREMENT PRIMARY KEY,
 email VARCHAR(100) NOT NULL UNIQUE,
 navn VARCHAR(50) NOT NULL,
-passord VARCHAR(128) NOT NULL,
+passord VARCHAR(256) NOT NULL,
+salt VARCHAR(16) NOT NULL,
 rolle SMALLINT DEFAULT 0,
 INDEX(brukerID)
 ) ENGINE=innoDB, AUTO_INCREMENT = 100;
 
 CREATE TABLE ovinger(
 ovingsID INT AUTO_INCREMENT PRIMARY KEY,
-oppgavetekst VARCHAR(250) NOT NULL,
+navn VARCHAR(64) NOT NULL,
+oppgavetekst VARCHAR(1024) NOT NULL,
 innleveringsfrist DATE,
 obligatorisk BOOLEAN DEFAULT TRUE,
 INDEX(ovingsID)
@@ -37,9 +39,18 @@ brukerID INT NOT NULL,
 ovingsID INT NOT NULL,
 vurderingsbruker INT NOT NULL,
 tilbakemelding VARCHAR(200) NOT NULL,
-nytteverdi INT NOT NULL,
+nytteverdi INT NOT NULL DEFAULT 0,
 CONSTRAINT tilbakemelding_fk1 FOREIGN KEY(brukerID, ovingsID) REFERENCES innleveringer(brukerID, ovingsID),
 CONSTRAINT tilbakemelding_fk2 FOREIGN KEY(vurderingsbruker) REFERENCES brukere(brukerID),
 CONSTRAINT tilbakemelding_pk PRIMARY KEY(brukerID, ovingsID, vurderingsbruker),
 INDEX(brukerID, ovingsID, vurderingsbruker)
 ) ENGINE=innoDB;
+
+--DELETE FROM brukere WHERE navn = 'Håkon Jarle Hassel';
+INSERT INTO brukere VALUES(DEFAULT, 'haakon.jarle.hassel@gmail.com', 'Håkon Jarle Hassel', 'd4e16b4851340746ec83625032353f31c5a6a5bfb62f3eaba3b199ea0047cc0ee9144582229107631ad47d9c68b90aa1c76d51a4621f4a7d53c50bd47bca6b30', 'skjeggvekstitelt', DEFAULT);
+
+INSERT INTO ovinger VALUES(DEFAULT, 'Øving 1', 'Lag ditt første PHP-script. Scriptet skal skrive ut "Hei Verden!" når besøkende klikker seg inn på siden din', '2014-04-30', DEFAULT);
+INSERT INTO ovinger VALUES(DEFAULT, 'Øving 3', 'Lag et PHP-script som skriver ut en valgfri sang fra en .txt-fil', '2014-05-05', TRUE);
+INSERT INTO ovinger VALUES(DEFAULT, 'Øving 2', 'Lag en PHP-side som er dynamisk.', '2014-05-02', DEFAULT);
+
+--DELETE FROM ovinger WHERE ovingsID=3;
