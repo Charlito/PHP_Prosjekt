@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
-        <title></title>
+        <meta http-equiv="Content-type" value="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="stilark.css" />
+        <?php
+        include 'service.incl.php';
+        $ovingsID = $_GET['ovingsID'];
+        $oving = getOving($ovingsID);
+        echo "<title>" . $oving['navn'] . "</title>";
+        ?>
     </head>
     <body>
-        <h1>Visning av besvarelse og kommentar</h1>
-        <?php
-        //TODO: hente ut x og y fra database
-        echo("<h2>Hei student nr x, du leverte denne besvarelsen den yy.yy</h2>");
-        //TODO: skriv ut besvarelsen
-        
-        echo("<h2>Du har fått x tilbakemeldinger til nå:</h2>");
-        //TODO: foreach tilbakemedling: skriv ut tilbakemelding{
-        //<select>foreach nytteverdi <option>nytteverdi</option><select>
-        //}
-        //<input type="submit" value="Oppdater nytteverdier">
-        ?>
+        <div id="wrapper">
+            <?php
+            echo '<h1>' . $oving['navn'] . '</h1>';
+            echo '<h2>Leveringsinformasjon</h2>';
+            $utskrift = '<p>&Oslash;vingen er ';
+            if ($oving['obligatorisk']) {
+                $utskrift = $utskrift . 'obligatorisk og ';
+            } else {
+                $utskrift = $utskrift . 'ikke obligatorisk men ';
+            }
+            $utskrift = $utskrift . 'm&aring; leveres innen ' . $oving['innleveringsfrist'];
+            echo $utskrift;
+            echo "<h2>Oppgavebeskrivelse</h2>";
+            echo '<p>' . $oving['oppgavetekst'] . '</p>'
+            ?>
+        </div>
     </body>
 </html>

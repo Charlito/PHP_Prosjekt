@@ -51,11 +51,10 @@ function leggTilOving() {
     }
 }
 
-function leverOving() {
+function leverOving($ovingsID) {
     $con = connect();
 
-    $brukerID = $_POST['brukerID'];
-    $ovingsID = $_POST['ovingsID'];
+    $brukerID = $_SESSION['brukerID'];
     $innlevering = $_POST['innlevering'];
 
     $query = "INSERT INTO innleveringer VALUES(?,?,?,DEFAULT,DEFAULT)";
@@ -115,6 +114,27 @@ function getOvinger() {
         $utskrift = $utskrift . "><a href='visOving.php?id=" . $array['ovingsID'] . "'>" . $array['navn'] . "</a></td></tr>";
         echo $utskrift;
     }
+    disconnect($con);
+}
+
+function getOving($ovingsID) {
+    $con = connect();
+    
+    $query = "SELECT navn, oppgavetekst, innleveringsfrist, obligatorisk FROM ovinger WHERE ovingsID=?";
+    $statement = $con->prepare($query);
+    $statement->bind_param("i", $ovingsID);
+    if ($statement->execute()) {
+        $statement->bind_result($navn, $oppgavetekst, $innleveringsfrist, $obligatorisk);
+        $statement->fetch();
+        $statement->close();
+        disconnect($con);
+        $assoc = [
+            'navn' => $navn,
+            'oppgavetekst' => $oppgavetekst,
+            'innleveringsfrist' => $innleveringsfrist,
+            'obligatorisk' => $obligatorisk];
+        return $assoc;
+    }
 }
 
 function getInnleveringer() {
@@ -131,5 +151,7 @@ function getInnleveringer() {
             print_r($row);
         }
     }
+    $statement->close();
+    disconnect($con);
 }
 
