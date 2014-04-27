@@ -28,38 +28,37 @@ and open the template in the editor.
                 //  if(isDone(øving))visBesvarelse; else leverBesvarelse;
                 //  for(i=1:3) if(harGittTilbakemelding) visTilbakemelding; else trekkTilfeldig;
                 $ovinger = getOvinger();
-//                forEach ($ovinger as $oving) {
-//                    $utskrift = "<tr><td colspan='5' id='" . $oving['ovingsID'] . "'";
-//                    if ($oving['obligatorisk']) {
-//                        $utskrift = $utskrift . " class=obligatorisk";
-//                    }
-//                    $utskrift = $utskrift . "><a href='visOving.php?ovingsID=" . $oving['ovingsID'] . "'>" . $oving['navn'] . "</a></td></tr>";
-//                    echo $utskrift;
-//                }
                 $innleveringer = getInnleveringer();
-//                forEach ($innleveringer as $oving) {
-//                    $utskrift = "<tr><td colspan='5'><a href='";
-//                    if ($oving['brukerID_levert'] != null || $oving['brukerID_levert'] != '') {
-//                        $utskrift = $utskrift . "visInnlevering.php?ovingsID=" . $oving['ovingsID'] . "'>Vis besvarelse";
-//                    } else {
-//                        $utskrift = $utskrift . "leverOving.php?ovingsID=" . $oving['ovingsID'] . "'>Lever besvarelse";
-//                    }
-//                    $utskrift = $utskrift . "</a></td></tr>";
-//                    echo $utskrift;
-//                }
+                $tilbakemeldinger = getAlleTilbakemeldinger();
+
                 for ($i = 0; $i < count($ovinger); $i++) {
                     $utskrift = "<tr><td id='" . $ovinger[$i]['ovingsID'] . "'";
                     if ($ovinger[$i]['obligatorisk']) {
                         $utskrift = $utskrift . " class=obligatorisk";
                     }
                     $utskrift = $utskrift . "><a href='visOving.php?ovingsID=" . $ovinger[$i]['ovingsID'] . "'>" . $ovinger[$i]['navn'] . "</a></td>";
+
+
                     $utskrift = $utskrift . "<td><a href='";
                     if ($innleveringer[$i]['brukerID_levert'] != null || $innleveringer[$i]['brukerID_levert'] != '') {
                         $utskrift = $utskrift . "visInnlevering.php?ovingsID=" . $innleveringer[$i]['ovingsID'] . "'>Vis besvarelse";
                     } else {
                         $utskrift = $utskrift . "leverOving.php?ovingsID=" . $innleveringer[$i]['ovingsID'] . "'>Lever besvarelse";
                     }
-                    $utskrift = $utskrift . "</a></td><td></td><td></td><td></td></tr>";
+                    $utskrift = $utskrift . "</a></td>";
+
+                    for ($j = 1; $j < 4; $j++) {
+                        if ($tilbakemeldinger[$i][$j] != null || $tilbakemeldinger[$i][$j] != '') {
+                            $utskrift = $utskrift
+                                    . "<td><a href='visTilbakemelding.php?ovingsID="
+                                    . $tilbakemeldinger[$i][0] . "&brukerID=" . $tilbakemeldinger[$i][$j]
+                                    . "'>Vis tilbakemelding</a></td>";
+                        } else {
+                            $utskrift = $utskrift
+                                    . "<td><a href=tilbakemeldingOving.php?ovingsID="
+                                    . $tilbakemeldinger[$i][0] . "'>Trekk tilfeldig</a></td>";
+                        }
+                    }
                     echo $utskrift;
                 }
                 ?>

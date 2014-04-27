@@ -19,6 +19,7 @@ and open the template in the editor.
     <body>
         <div id="wrapper">
             <?php
+            $tilbakemeldinger = getTilbakemelding();
             echo '<h1>Din innlevering for ' . $oving['navn'] . '</h1>';
             
             $utskrift = '<p>&Oslash;vingen er ';
@@ -36,7 +37,15 @@ and open the template in the editor.
             echo '<p>' . $innlevering['innlevering'] . '</p>';
             
             echo "<h2>Tilbakemeldinger</h2>";
-            
+            echo "<ol>";
+            for ($i = 0; $i < count($tilbakemeldinger); $i++) {
+                if ($tilbakemeldinger[$i]['tilbakemelding'] != null || $tilbakemeldinger[$i]['tilbakemelding'] != '') {
+                    echo "<li><p>" . $tilbakemeldinger[$i]['tilbakemelding'] . "</p></li>";
+                } else {
+                    echo "<li><p>Ingen tilbakemelding</p></li>";
+                }
+            }
+            echo "</ol>";
             ?>
         </div>
     </body>

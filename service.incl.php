@@ -99,50 +99,69 @@ function godkjennOving() {
     if (disconnect($con) && $statement->close()) {
         return true;
     }
-}function getTilbakemeldinger($ovingsID, $brukerID){
+}
+
+function getTilbakemelding() {
+    $con = connect();
+
+    // OBS! Husk å endre tilbake til $_SESSION etter testing.
+    $brukerID = $_GET['brukerID'];
+    $ovingsID = $_GET['ovingsID'];
+
+    $query = "SELECT tilbakemeldinger.brukerID, tilbakemeldinger.ovingsID, "
+            . "tilbakemeldinger.tilbakemelding FROM tilbakemeldinger WHERE "
+            . "tilbakemeldinger.brukerID=? AND tilbakemeldinger.ovingsID=?";
+    $statement = $con->prepare($query);
+    $statement->bind_param("ii", $brukerID, $ovingsID);
+    $array = [NULL, NULL, NULL];
+    if ($statement->execute()) {
+        $statement->store_result();
+        $statement->bind_result($brukerID, $ovingsID, $tilbakemelding);
+        for ($i = 0; $i < $statement->num_rows; $i++) {
+            $statement->fetch();
+            $array[$i] = [
+                'brukerID' => $brukerID,
+                'ovingsID' => $ovingsID,
+                'tilbakemelding' => $tilbakemelding];
+        }
+        $statement->close();
+        disconnect($con);
+        return $array;
+    }
+}
+
+function getTilbakemeldinger($ovingsID, $brukerID) {
     $con = connect();
     $tilbakeMeldinger = [NULL, NULL, NULL];
-    print_r($tilbakeMeldinger);
-    $index = 0;
-    print_r($ovingsID);
-    print_r($brukerID);
     $query = "SELECT brukerID FROM tilbakemeldinger WHERE vurderingsbruker=? AND ovingsID=?";
     $statement = $con->prepare($query);
-    $statement->bind_param("ii",$brukerID,$ovingsID);
-    if($statement->execute()){
+    $statement->bind_param("ii", $brukerID, $ovingsID);
+    if ($statement->execute()) {
+        $statement->store_result();
         $statement->bind_result($levertBruker);
-        while($statement->fetch()){
-            print_r($levertBruker);
-            $tilbakeMeldinger[$index] = $levertBruker;
-            $index++;
+        for ($i = 0; $i < $statement->num_rows; $i++) {
+            $statement->fetch();
+            $tilbakeMeldinger[$i] = $levertBruker;
         }
     }
-    print_r($tilbakeMeldinger);
     $statement->close();
     disconnect($con);
     return $tilbakeMeldinger;
-    
 }
 
-function getAlleTilbakemeldinger(){
-    ini_set('memory_limit','-1');
+function getAlleTilbakemeldinger() {
     $ovingArray = getOvinger();
-    //print_r($ovingArray[0]['ovingsID']);
     $ovingMTilbakemelding = [];
-    echo(count($ovingArray));
-    
+
     for ($index = 0; $index < count($ovingArray); $index++) {
         $ovingMTilbakemelding[$index] = [$ovingArray[$index]['ovingsID']];
-        $tilbakemedlinger = getTilbakemeldinger($ovingArray[$index]['ovingsID'], $_GET['brukerID']);
-        for($index2 = 1; $index2 < 4; $index2){
-            print_r($tilbakemedlinger[$index2]);
-            $ovingMTilbakemelding[$index[$index2]] = $tilbakemedlinger[$index2-1];
+        $tilbakemeldinger = getTilbakemeldinger($ovingArray[$index]['ovingsID'], $_GET['brukerID']);
+        for ($index2 = 1; $index2 < 4; $index2++) {
+            array_push($ovingMTilbakemelding[$index], $tilbakemeldinger[$index2 - 1]);
         }
-    }   
-    print_r($ovingMTilbakemelding);
+    }
     return $ovingMTilbakemelding;
 }
-
 
 function getOvinger() {
     $con = connect();
@@ -193,7 +212,7 @@ function getInnleveringer() {
     $statement = $con->prepare($query);
     $statement->bind_param("i", $brukerID);
     $array = [];
-    
+
     if ($statement->execute()) {
         $statement->store_result();
         $statement->bind_result($ovingsID, $brukerID_levert);
@@ -205,7 +224,7 @@ function getInnleveringer() {
             ];
         }
     }
-    
+
     $statement->close();
     disconnect($con);
     //print_r($array);
