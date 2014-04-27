@@ -28,6 +28,7 @@ and open the template in the editor.
                 //  if(isDone(øving))visBesvarelse; else leverBesvarelse;
                 //  for(i=1:3) if(harGittTilbakemelding) visTilbakemelding; else trekkTilfeldig;
                 getOvinger();
+                getInnleveringer();
                 ?>
             </table>
         </div>

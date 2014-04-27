@@ -103,7 +103,7 @@ function godkjennOving() {
 
 function getOvinger() {
     $con = connect();
-    
+
     $query = "SELECT * FROM ovinger ORDER BY innleveringsfrist";
     $result = mysqli_query($con, $query);
     while ($array = mysqli_fetch_assoc($result)) {
@@ -119,7 +119,7 @@ function getOvinger() {
 
 function getOving($ovingsID) {
     $con = connect();
-    
+
     $query = "SELECT navn, oppgavetekst, innleveringsfrist, obligatorisk FROM ovinger WHERE ovingsID=?";
     $statement = $con->prepare($query);
     $statement->bind_param("i", $ovingsID);
@@ -139,20 +139,48 @@ function getOving($ovingsID) {
 
 function getInnleveringer() {
     $con = connect();
-    
-    $brukerID = $_POST['brukerID'];
-    $ovingsID = $_POST['ovingsID'];
-    
-    $query = "SELECT innlevering, innleveringsdato, godkjent FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
+
+    $brukerID = $_GET['brukerID'];
+
+    $query = "SELECT ovingsID FROM innleveringer WHERE brukerID=? ORDER BY innleveringsdato";
+    $query = "SELECT ovinger.ovingsID, innleveringer.brukerID "
+            . "FROM innleveringer RIGHT OUTER JOIN ovinger ON ovinger.ovingsID = innleveringer.ovingsID "
+            . "AND brukerID=? ORDER BY ovinger.innleveringsfrist";
     $statement = $con->prepare($query);
-    $statement->bind_param("ii", $brukerID, $ovingsID);
+    $statement->bind_param("i", $brukerID);
     if ($statement->execute()) {
-        $statement->bind_result($innlevering, $innleveringsdato, $godkjent);
-        while ($row = $statement->fetch()) {
-            print_r($row);
+        $statement->bind_result($ovingsID, $brukerID_levert);
+        while ($statement->fetch()) {
+            $oving = getOving($ovingsID);
+            $utskrift = "<tr><td colspan='5'><a href='";
+            if ($brukerID_levert != null || $brukerID_levert != '') {
+                $utskrift = $utskrift . "visInnlevering.php?ovingsID=" . $ovingsID . "'>Vis besvarelse";
+            } else {
+                $utskrift = $utskrift . "leverOving.php?ovingsID=" . $ovingsID . "'>Lever besvarelse";
+            }
+            $utskrift = $utskrift . "</a></td></tr>";
+            echo $utskrift;
         }
     }
     $statement->close();
     disconnect($con);
 }
 
+function getInnlevering() {
+    $con = connect();
+
+    $brukerID = $_SESSION['brukerID'];
+    $ovingsID = $_GET['ovingsID'];
+
+    $query = "SELECT innlevering, innleveringsdato, godkjent FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
+    $statement = $con->prepare($query);
+    $statement->bind_param("ii", $brukerID, $ovingsID);
+    if ($statement->execute()) {
+        $statement->bind_result($innlevering, $innleveringsdato, $godkjent);
+        while ($statement->fetch()) {
+            echo "<tr><td colspan='5'>" . $innlevering . ', ' . $innleveringsdato . ', ' . $godkjent . "</td></tr>";
+        }
+    }
+    $statement->close();
+    disconnect($con);
+}
