@@ -8,11 +8,13 @@
     </head>
     <body>
         <?php
-        //TODO: add medstudentnr. og øvingsnr.
-        echo("<h1>Retting av medstudent nr x, øving x");
+        $oving = getOving($_GET['ovingsID']);
+        $innlevering = getInnlevering($ovingsID, $_GET['brukerID']);
+        echo("<h1>Retting av medstudent nr ". $_GET['ovingsID'] .", " . $oving['navn']);
         //Skriv ut øvinga
-        
-        echo("<h2>Din tilbakemelding til student x (du selv nr y)</h2>");
+        echo "<p>". $innlevering['oppgavetekst'] ."<p>";
+        //TODO: erstatte y med session
+        echo("<h2>Din tilbakemelding til student " . $_GET['brukerID'] ." (du selv nr y)</h2>");
         ?>
         <textarea ></textarea>
         <select>
