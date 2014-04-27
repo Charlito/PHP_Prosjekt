@@ -59,14 +59,17 @@ h1 {
     font-weight: 500;
     text-align: center;
     margin-top: 40px;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
+    color: #475F77;
 }
 
 h2 {
     font-family: 'Port Lligat Slab';
     font-weight: 200;
-    text-align: center;
-    color: #aaa;
+    text-align: left;
+    margin-top: 4%;
+    margin-bottom: 2%;
+    color: #475F77;
 }
 
 article {

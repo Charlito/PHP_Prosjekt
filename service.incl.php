@@ -111,7 +111,7 @@ function getOvinger() {
         if ($array['obligatorisk']) {
             $utskrift = $utskrift . " class=obligatorisk";
         }
-        $utskrift = $utskrift . "><a href='visOving.php?id=" . $array['ovingsID'] . "'>" . $array['navn'] . "</a></td></tr>";
+        $utskrift = $utskrift . "><a href='visOving.php?ovingsID=" . $array['ovingsID'] . "'>" . $array['navn'] . "</a></td></tr>";
         echo $utskrift;
     }
     disconnect($con);
@@ -143,10 +143,11 @@ function getInnleveringer() {
     $brukerID = $_POST['brukerID'];
     $ovingsID = $_POST['ovingsID'];
     
-    $query = "SELECT * FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
+    $query = "SELECT innlevering, innleveringsdato, godkjent FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
     $statement = $con->prepare($query);
     $statement->bind_param("ii", $brukerID, $ovingsID);
     if ($statement->execute()) {
+        $statement->bind_result($innlevering, $innleveringsdato, $godkjent);
         while ($row = $statement->fetch()) {
             print_r($row);
         }
