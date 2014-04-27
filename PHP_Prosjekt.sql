@@ -58,3 +58,10 @@ INSERT INTO innleveringer VALUES(101, 1, 'Er dette godkjent? www.arngrens.no', D
 INSERT INTO innleveringer VALUES(101, 2, 'huehueheuhuehue', DEFAULT, DEFAULT);
 
 select ovinger.`ovingsID`, innleveringer.`brukerID` from innleveringer right outer join ovinger on ovinger.`ovingsID` = innleveringer.`ovingsID` and brukerID = 101;
+
+SELECT innleveringer.ovingsID, innleveringer.brukerID, COUNT(tilbakemeldinger.brukerID) AS tilbakemeldinger 
+FROM innleveringer LEFT OUTER JOIN tilbakemeldinger
+ON innleveringer.brukerID = tilbakemeldinger.brukerID
+AND innleveringer.ovingsID = tilbakemeldinger.ovingsID
+WHERE innleveringer.brukerID != 101 AND innleveringer.ovingsID = 1
+GROUP BY tilbakemeldinger.ovingsID;

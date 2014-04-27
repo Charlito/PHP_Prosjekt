@@ -1,27 +1,58 @@
 <!DOCTYPE html>
-
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta http-equiv="Content-type" value="text/html; charset=UTF-8" />
         <title>Tilbakemelding</title>
         <link rel="stylesheet" href="stilark.css" />
+        <?php 
+        include 'service.incl.php';
+        ?>
     </head>
     <body>
-        <?php
-        $oving = getOving($_GET['ovingsID']);
-        $innlevering = getInnlevering($ovingsID, $_GET['brukerID']);
-        echo("<h1>Retting av medstudent nr ". $_GET['ovingsID'] .", " . $oving['navn']);
-        //Skriv ut øvinga
-        echo "<p>". $innlevering['oppgavetekst'] ."<p>";
-        //TODO: erstatte y med session
-        echo("<h2>Din tilbakemelding til student " . $_GET['brukerID'] ." (du selv nr y)</h2>");
-        ?>
-        <textarea ></textarea>
-        <select>
-            <option>Godkjent</option>
-            <option>Ikke godkjent</option>
-        </select>
-        <input type="submit" value="Gi tilbakemelding">
-        
+        <div id="wrapper">
+            <?php
+            $brukerID = $_SESSION['brukerID'];
+            $ovingsID = $_GET['ovingsID'];
+            $oving = getOving($ovingsID);
+            $innleveringer = getInnleveringerForVurdering($ovingsID);
+            $brukerTilVurdering = $innleveringer[0]['brukerID']; 
+            $innlevering = getInnlevering($innleveringer[0]['ovingsID'], $brukerTilVurdering);
+            if ($brukerTilVurdering != null || $brukerTilVurdering != '') {
+                echo "<h1>Retting av medstudent nr $brukerTilVurdering, " . $oving['navn'] . "</h1>";
+            } else {
+                echo "<h1>Retting av " . $oving['navn'] . "</h1>";
+            }
+            //Skriv ut øvinga
+            echo "<h2>Oppgavetekst</h2>";
+            echo "<p>" . $oving['oppgavetekst'] . "<p>";
+            echo "<h2>Studentbesvarelse</h2>";
+            if ($innlevering['innlevering'] != null || $innlevering['innlevering'] != '') {
+                echo "<p>" . $innlevering['innlevering'] . "</p>";
+                echo "<h2>Din tilbakemelding til student " . $brukerTilVurdering . " (du selv nr " . $brukerID . ")</h2>";
+            } else {
+                echo "<p>Det er ingen studentbesvarelser &aring; vurdere enda.</p>";
+                echo "<h2>Din tilbakemelding: </h2>";
+            }
+            
+            ?>
+            <form method="POST">
+                <textarea id="tilbakemelding" name="tilbakemelding"></textarea>
+                <?php
+                echo "<div hidden='true' name='$ovingsID'></div>";
+                echo "<div hidden='true' name='$brukerID'></div>";
+                ?>
+                <select>
+                    <option name="true" id="1">Godkjent</option>
+                    <option name="false" id="0">Ikke godkjent</option>
+                </select>
+                <input type="submit" value="Gi tilbakemelding" name="submit">
+            </form>
+        </div>
     </body>
 </html>
+
+<?php
+if (isset($_POST['submit'])) {
+    leverTilbakemelding();
+}
+?>

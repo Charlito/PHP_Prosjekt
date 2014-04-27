@@ -12,24 +12,28 @@ function leggTilBruker() {
 
     $epost = $_POST['epost'];
     $salt = salt();
-    echo $salt;
     $passord = $_POST['passord'];
     $passordsjekk = $_POST['passordsjekk'];
     if ($passord != $passordsjekk) {
-        return false;
+        return "Sjekk at passordene du skrev stemmer overens";
     }
     $pw = hash("sha512", salt() . $passord);
     $navn = $_POST['navn'];
-    $rolle = $_POST['rolle'];
-
-    $query = "INSERT INTO brukere VALUES(DEFAULT,?,?,?,?,DEFAULT)";
+    $rolle = intval($_POST['rolle']);
+    
+    $query = "INSERT INTO brukere (brukerID,email,navn,passord,salt,rolle) VALUES (DEFAULT,?,?,?,?)";
     $statement = $con->prepare($query);
-    $statement->bind_param("ssssi", $epost, $navn, $pw, $rolle);
-    $statement->execute();
-
-    if (disconnect($con) && $statement->close()) {
-        return true;
+    echo "HEI!" . mysqli_errno($statement);
+    $statement->bind_param("ssssi", $epost, $navn, $pw, $salt, $rolle);
+    echo "STIKK AV!" . mysqli_errno($statement);
+    if ($statement->execute()) {
+        echo 'Hei';
     }
+
+    $statement->close();
+    disconnect($con);
+    
+    return "La til bruker ved navn: " . $navn;
 }
 
 function leggTilOving() {
@@ -222,6 +226,43 @@ function getInnleveringer() {
             $array[$i] = [
                 'ovingsID' => $ovingsID,
                 'brukerID_levert' => $brukerID_levert
+            ];
+        }
+    }
+
+    $statement->close();
+    disconnect($con);
+    //print_r($array);
+    return $array;
+}
+
+function getInnleveringerForVurdering($ovingsID) {
+    $con = connect();
+
+    $brukerID = $_SESSION['brukerID'];
+
+    $query = "SELECT innleveringer.ovingsID, innleveringer.brukerID, "
+            . "COUNT(tilbakemeldinger.brukerID) AS tilbakemeldinger "
+            . "FROM innleveringer LEFT OUTER JOIN tilbakemeldinger "
+            . "ON innleveringer.brukerID = tilbakemeldinger.brukerID "
+            . "AND innleveringer.ovingsID = tilbakemeldinger.ovingsID "
+            . "WHERE innleveringer.brukerID != ? "
+            . "AND innleveringer.ovingsID = ? "
+            . "GROUP BY tilbakemeldinger.ovingsID";
+
+    $statement = $con->prepare($query);
+    $statement->bind_param("ii", $brukerID, $ovingsID);
+    $array = [];
+
+    if ($statement->execute()) {
+        $statement->store_result();
+        $statement->bind_result($ovingsID, $brukerID, $antallTilbakemeldinger);
+        for ($i = 0; $i < $statement->num_rows; $i++) {
+            $statement->fetch();
+            $array[$i] = [
+                'ovingsID' => $ovingsID,
+                'brukerID' => $brukerID,
+                'antallTilbakemeldinger' => $antallTilbakemeldinger
             ];
         }
     }

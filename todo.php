@@ -50,7 +50,7 @@
                                     . "'>Vis tilbakemelding</a></td>";
                         } else {
                             $utskrift = $utskrift
-                                    . "<td><a href=tilbakemeldingOving.php?ovingsID="
+                                    . "<td><a href='tilbakemeldingOving.php?ovingsID="
                                     . $tilbakemeldinger[$i][0] . "'>Trekk tilfeldig</a></td>";
                         }
                     }
