@@ -10,10 +10,6 @@
     </head>
     <body>
         <div id="wrapper">
-            <?php
-            session_start();
-            echo $_SESSION['brukerID'];
-            ?>
             <table>
                 <thead>
                 <th>Gj&oslash;rem&aring;l</th>
