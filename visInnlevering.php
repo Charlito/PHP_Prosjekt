@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <meta http-equiv="Content-type" value="text/html; charset=UTF-8" />
@@ -13,7 +8,7 @@ and open the template in the editor.
         include 'service.incl.php';
         $ovingsID = $_GET['ovingsID'];
         $oving = getOving($ovingsID);
-        $innlevering = getInnlevering($ovingsID);
+        $innlevering = getInnlevering($ovingsID, $_SESSION['brukerID']);
         ?>
     </head>
     <body>

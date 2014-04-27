@@ -8,10 +8,13 @@
     <body>
         <div id="wrapper">
             <?php
+            session_start();
             if (isset($_SESSION['brukerID'])) {
-                header('Location: /PHP_Prosjekt/todo.php');
+                echo "<meta http-equiv='refresh' content='0; url=./todo.php' />";
+                //header('Location: ./todo.php');
             } else {
-                header('Location: /PHP_Prosjekt/login.php');
+                echo "<meta http-equiv='refresh' content='0; url=./login.php?error=Feil brukernavn eller passord.' />";
+                //header('Location: ./login.php');
             }
             ?>
         </div>

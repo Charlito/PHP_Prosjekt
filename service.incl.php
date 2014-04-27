@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 include 'dbconnect.incl.php';
 
@@ -203,7 +204,7 @@ function getOving($ovingsID) {
 function getInnleveringer() {
     $con = connect();
 
-    $brukerID = $_GET['brukerID'];
+    $brukerID = $_SESSION['brukerID'];
 
     $query = "SELECT ovinger.ovingsID, innleveringer.brukerID "
             . "FROM innleveringer RIGHT OUTER JOIN ovinger ON ovinger.ovingsID = innleveringer.ovingsID "
@@ -231,11 +232,8 @@ function getInnleveringer() {
     return $array;
 }
 
-function getInnlevering($ovingsID) {
+function getInnlevering($ovingsID, $brukerID) {
     $con = connect();
-
-    // OBS! Endre tilbake til $_SESSION etter testing.
-    $brukerID = $_GET['brukerID'];
 
     $query = "SELECT innlevering, innleveringsdato, godkjent FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
     $statement = $con->prepare($query);

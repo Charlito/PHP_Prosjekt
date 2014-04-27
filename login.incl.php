@@ -19,7 +19,7 @@ function login() {
     $epost = ($_POST['epost']);
     $salt = getSalt($con, $epost);
     $pw = hash('sha512', $salt . $_POST['passord']);
-    echo $epost . '<br />' . $salt . '<br />' . $pw;
+    //echo $epost . '<br />' . $salt . '<br />' . $pw;
     
     $query = "SELECT brukerID FROM brukere WHERE email=? AND passord=?";
     $statement = $con->prepare($query);
@@ -33,7 +33,8 @@ function login() {
         session_start();
         $_SESSION['brukerID'] = $brukerID;
         if (disconnect($con) && $statement->close()) {
-            header('Location: ./index.php');
+            echo "<meta http-equiv='refresh' content='0; url=./index.php' />";
+            //header('Location: ./todo.php');
         }
     } else {
         echo '<br /><strong>Feil brukernavn eller passord.</strong>';

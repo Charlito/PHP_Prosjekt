@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <meta http-equiv="Content-type" value="text/html; charset=UTF-8" />
@@ -15,6 +10,10 @@ and open the template in the editor.
     </head>
     <body>
         <div id="wrapper">
+            <?php
+            session_start();
+            echo $_SESSION['brukerID'];
+            ?>
             <table>
                 <thead>
                 <th>Gj&oslash;rem&aring;l</th>
