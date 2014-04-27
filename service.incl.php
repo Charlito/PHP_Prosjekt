@@ -106,15 +106,16 @@ function getOvinger() {
 
     $query = "SELECT * FROM ovinger ORDER BY innleveringsfrist";
     $result = mysqli_query($con, $query);
-    while ($array = mysqli_fetch_assoc($result)) {
-        $utskrift = "<tr><td colspan='5' id='" . $array['ovingsID'] . "'";
-        if ($array['obligatorisk']) {
-            $utskrift = $utskrift . " class=obligatorisk";
-        }
-        $utskrift = $utskrift . "><a href='visOving.php?ovingsID=" . $array['ovingsID'] . "'>" . $array['navn'] . "</a></td></tr>";
-        echo $utskrift;
+    $antall = mysqli_num_rows($result);
+    $array = [];
+    for ($i = 0; $i < $antall; $i++) {
+        $assoc = mysqli_fetch_assoc($result);
+        $array[$i] = $assoc;
     }
+    $result->close();
     disconnect($con);
+    //print_r($array);
+    return $array;
 }
 
 function getOving($ovingsID) {
@@ -142,45 +143,50 @@ function getInnleveringer() {
 
     $brukerID = $_GET['brukerID'];
 
-    $query = "SELECT ovingsID FROM innleveringer WHERE brukerID=? ORDER BY innleveringsdato";
     $query = "SELECT ovinger.ovingsID, innleveringer.brukerID "
             . "FROM innleveringer RIGHT OUTER JOIN ovinger ON ovinger.ovingsID = innleveringer.ovingsID "
             . "AND brukerID=? ORDER BY ovinger.innleveringsfrist";
+
     $statement = $con->prepare($query);
     $statement->bind_param("i", $brukerID);
+    $array = [];
+    
     if ($statement->execute()) {
+        $statement->store_result();
         $statement->bind_result($ovingsID, $brukerID_levert);
-        while ($statement->fetch()) {
-            $oving = getOving($ovingsID);
-            $utskrift = "<tr><td colspan='5'><a href='";
-            if ($brukerID_levert != null || $brukerID_levert != '') {
-                $utskrift = $utskrift . "visInnlevering.php?ovingsID=" . $ovingsID . "'>Vis besvarelse";
-            } else {
-                $utskrift = $utskrift . "leverOving.php?ovingsID=" . $ovingsID . "'>Lever besvarelse";
-            }
-            $utskrift = $utskrift . "</a></td></tr>";
-            echo $utskrift;
+        for ($i = 0; $i < $statement->num_rows; $i++) {
+            $statement->fetch();
+            $array[$i] = [
+                'ovingsID' => $ovingsID,
+                'brukerID_levert' => $brukerID_levert
+            ];
         }
     }
+    
     $statement->close();
     disconnect($con);
+    //print_r($array);
+    return $array;
 }
 
-function getInnlevering() {
+function getInnlevering($ovingsID) {
     $con = connect();
 
-    $brukerID = $_SESSION['brukerID'];
-    $ovingsID = $_GET['ovingsID'];
+    // OBS! Endre tilbake til $_SESSION etter testing.
+    $brukerID = $_GET['brukerID'];
 
     $query = "SELECT innlevering, innleveringsdato, godkjent FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
     $statement = $con->prepare($query);
     $statement->bind_param("ii", $brukerID, $ovingsID);
     if ($statement->execute()) {
         $statement->bind_result($innlevering, $innleveringsdato, $godkjent);
-        while ($statement->fetch()) {
-            echo "<tr><td colspan='5'>" . $innlevering . ', ' . $innleveringsdato . ', ' . $godkjent . "</td></tr>";
-        }
+        $statement->fetch();
+        $statement->close();
+        disconnect($con);
+        $assoc = [
+            'innlevering' => $innlevering,
+            'innleveringsdato' => $innleveringsdato,
+            'godkjent' => $godkjent];
+        return $assoc;
     }
-    $statement->close();
-    disconnect($con);
 }
