@@ -9,6 +9,9 @@
         ?>
     </head>
     <body>
+        <?php 
+        adminMeny();
+        ?>
         <div id="wrapper">
             <h1>Registrering</h1>
             
