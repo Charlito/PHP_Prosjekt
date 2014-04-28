@@ -30,13 +30,13 @@
             echo '<p>' . $oving['oppgavetekst'] . '</p>';
             
             echo '<h2>Besvarelse</h2>';
-            echo '<p>' . htmlspecialchars($innlevering['innlevering']) . '</p>';
+            echo '<p>' . utf8_decode(htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE)) . '</p>';
             
             echo "<h2>Tilbakemeldinger</h2>";
             echo "<ol>";
             for ($i = 0; $i < count($tilbakemeldinger); $i++) {
                 if ($tilbakemeldinger[$i]['tilbakemelding'] != null || $tilbakemeldinger[$i]['tilbakemelding'] != '') {
-                    echo "<li><p>" . htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding']) . "</p></li>";
+                    echo "<li><p>" . utf8_decode(htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE)) . "</p></li>";
                 } else {
                     echo "<li><p>Ingen tilbakemelding</p></li>";
                 }

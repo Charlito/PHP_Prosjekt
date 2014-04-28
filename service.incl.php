@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 include 'dbconnect.incl.php';
@@ -116,6 +117,33 @@ function godkjennOving() {
     }
 }
 
+function getSpesifikkTilbakemelding($brukerTilVurdering, $ovingsID) {
+    $con = connect();
+
+    $brukerID = $_SESSION['brukerID'];
+
+    $query = "SELECT tilbakemelding, nytteverdi FROM tilbakemeldinger"
+            . "WHERE brukerID=? AND ovingsID=? AND vurderingsbruker=?";
+    $statement = $con->prepare($query);
+    echo "hei";
+    $statement->bind_param('iii', $brukerTilVurdering, $ovingsID, $brukerID);
+    echo "HEI!";
+    if ($statement->execute()) {
+        $statement->bind_result($tilbakemelding, $nytteverdi);
+        $statement->fetch();
+        $assoc = [
+            'tilbakemelding' => $tilbakemelding,
+            'nytteverdi' => $nytteverdi
+        ];
+        $statement->close();
+        disconnect($con);
+        return $assoc;
+    }
+    $statement->close();
+    disconnect($con);
+    echo "<strong>Kunne ikke hente tilbakemelding.</strong>";
+}
+
 function getTilbakemelding() {
     $con = connect();
 
@@ -138,7 +166,7 @@ function getTilbakemelding() {
             $array[$i] = [
                 'brukerID' => $brukerID,
                 'ovingsID' => $ovingsID,
-                'tilbakemelding' => htmlspecialchars($tilbakemelding)];
+                'tilbakemelding' => $tilbakemelding];
         }
         $statement->close();
         disconnect($con);
@@ -209,7 +237,7 @@ function getOving($ovingsID) {
         disconnect($con);
         $assoc = [
             'navn' => $navn,
-            'oppgavetekst' => htmlspecialchars($oppgavetekst),
+            'oppgavetekst' => $oppgavetekst,
             'innleveringsfrist' => $innleveringsfrist,
             'obligatorisk' => $obligatorisk];
         return $assoc;
@@ -296,7 +324,7 @@ function getInnlevering($ovingsID, $brukerID) {
         $statement->close();
         disconnect($con);
         $assoc = [
-            'innlevering' => htmlspecialchars($innlevering),
+            'innlevering' => $innlevering,
             'innleveringsdato' => $innleveringsdato,
             'godkjent' => $godkjent];
         return $assoc;
