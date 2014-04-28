@@ -122,17 +122,15 @@ function leverTilbakemelding() {
     $ovingsID = $_SESSION['ovingsID'];
     $vurderingsbruker = $_SESSION['brukerID'];
     $tilbakemelding = $_POST['tilbakemelding'];
-    echo "Innlogget bruker: $vurderingsbruker, ovingsID: $ovingsID, bruker til vurdering: $brukerID, tilbakemelding: $tilbakemelding";
+    //echo "Innlogget bruker: $vurderingsbruker, ovingsID: $ovingsID, bruker til vurdering: $brukerID, tilbakemelding: $tilbakemelding";
 
     $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,DEFAULT)";
     $statement = $con->prepare($query);
-    echo "hei";
     $statement->bind_param("iiis", $brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding);
-    echo "HEI!";
     if ($statement->execute()) {
         $statement->close();
         disconnect($con);
-        return "<p>Tilbakemeldingen er levert.</p>";
+        return "<meta http-equiv='refresh' content='0; url=./todo.php' />";
     }
     $statement->close();
     disconnect($con);
@@ -160,12 +158,10 @@ function getSpesifikkTilbakemelding($brukerTilVurdering, $ovingsID) {
 
     $brukerID = $_SESSION['brukerID'];
 
-    $query = "SELECT tilbakemelding, nytteverdi FROM tilbakemeldinger"
+    $query = "SELECT tilbakemelding, nytteverdi FROM tilbakemeldinger "
             . "WHERE brukerID=? AND ovingsID=? AND vurderingsbruker=?";
     $statement = $con->prepare($query);
-    echo "hei";
-    $statement->bind_param('iii', $brukerTilVurdering, $ovingsID, $brukerID);
-    echo "HEI!";
+    $statement->bind_param("iii", $brukerTilVurdering, $ovingsID, $brukerID);
     if ($statement->execute()) {
         $statement->bind_result($tilbakemelding, $nytteverdi);
         $statement->fetch();
