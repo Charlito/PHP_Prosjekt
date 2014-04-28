@@ -1,17 +1,27 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
-        <meta charset="UTF-8">
-        <title></title>
+        <meta http-equiv="Content-type" value="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="stilark.css" />
+        <title>Din tilbakemelding</title>
+        <?php
+        include 'services.incl.php';
+        session_start();
+        ?>
     </head>
     <body>
-        <?php
-        // put your code here
-        ?>
+        <div id="wrapper">
+            <?php
+            $brukerID = $_SESSION['brukerID'];
+            $ovingsID = $_GET['ovingsID'];
+            $brukerTilVurdering = $_GET['brukerID'];
+            echo "<p>Innlogget bruker: $brukerID, &oslash;ving: $ovingsID, tilbakemelding til bruker $brukerTilVurdering</p>";
+            ?>
+            <table>
+                <thead>
+                    <th></th>
+                </thead>
+            </table>
+        </div>
     </body>
 </html>

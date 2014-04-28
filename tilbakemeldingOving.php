@@ -42,7 +42,7 @@
             }
             
             ?>
-            <form method="POST" action="tilbakemeldingOving.php?ovingsID=<?php echo $ovingsID; ?>">
+            <form method="POST" action="tilbakemeldingOving.php?todo.php">
                 <textarea id="tilbakemelding" name="tilbakemelding"></textarea>
                 
                 <select name="godkjent">

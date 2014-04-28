@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 
 include 'dbconnect.incl.php';
@@ -72,6 +71,8 @@ function leverOving($ovingsID) {
         disconnect($con);
         return "<meta http-equiv='refresh' content='0; url=./todo.php' />";
     }
+    $statement->close();
+    disconnect($con);
     return "<strong>Kunne ikke levere &oslash;vingen, prøv igjen senere</strong>";
 }
 
@@ -84,14 +85,18 @@ function leverTilbakemelding() {
     $tilbakemelding = $_POST['tilbakemelding'];
     echo "Innlogget bruker: $vurderingsbruker, ovingsID: $ovingsID, bruker til vurdering: $brukerID, tilbakemelding: $tilbakemelding";
 
-    $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,DEFAULT))";
+    $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,DEFAULT)";
     $statement = $con->prepare($query);
-    $statement->bind_param("iiisi", $brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding);
+    echo "hei";
+    $statement->bind_param("iiis", $brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding);
+    echo "HEI!";
     if ($statement->execute()) {
         $statement->close();
         disconnect($con);
         return "<p>Tilbakemeldingen er levert.</p>";
     }
+    $statement->close();
+    disconnect($con);
     return "<strong>Kunne ikke levere tilbakemeldingen, vennligst prøv senere.</strong>";
 }
 
@@ -166,7 +171,7 @@ function getAlleTilbakemeldinger() {
 
     for ($index = 0; $index < count($ovingArray); $index++) {
         $ovingMTilbakemelding[$index] = [$ovingArray[$index]['ovingsID']];
-        $tilbakemeldinger = getTilbakemeldinger($ovingArray[$index]['ovingsID'], $_GET['brukerID']);
+        $tilbakemeldinger = getTilbakemeldinger($ovingArray[$index]['ovingsID'], $_SESSION['brukerID']);
         for ($index2 = 1; $index2 < 4; $index2++) {
             array_push($ovingMTilbakemelding[$index], $tilbakemeldinger[$index2 - 1]);
         }
