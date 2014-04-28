@@ -17,8 +17,15 @@
             $innleveringer = getInnleveringerForVurdering($ovingsID);
             $brukerTilVurdering = $innleveringer[0]['brukerID']; 
             $innlevering = getInnlevering($innleveringer[0]['ovingsID'], $brukerTilVurdering);
+            
+            $_SESSION['brukerTilVurdering'] = $brukerTilVurdering;
+            $_SESSION['ovingsID'] = $ovingsID;
+            
             if ($brukerTilVurdering != null || $brukerTilVurdering != '') {
                 echo "<h1>Retting av medstudent nr $brukerTilVurdering, " . $oving['navn'] . "</h1>";
+                if (isset($_POST['submit'])) {
+                    echo leverTilbakemelding();
+                }
             } else {
                 echo "<h1>Retting av " . $oving['navn'] . "</h1>";
             }
@@ -30,29 +37,20 @@
                 echo "<p>" . $innlevering['innlevering'] . "</p>";
                 echo "<h2>Din tilbakemelding til student " . $brukerTilVurdering . " (du selv nr " . $brukerID . ")</h2>";
             } else {
-                echo "<p>Det er ingen studentbesvarelser &aring; vurdere enda.</p>";
+                echo "<p>Det er ingen passende studentbesvarelser &aring; vurdere akkurat n&aring;.</p>";
                 echo "<h2>Din tilbakemelding: </h2>";
             }
             
             ?>
-            <form method="POST">
+            <form method="POST" action="tilbakemeldingOving.php?ovingsID=<?php echo $ovingsID; ?>">
                 <textarea id="tilbakemelding" name="tilbakemelding"></textarea>
-                <?php
-                echo "<div hidden='true' name='$ovingsID'></div>";
-                echo "<div hidden='true' name='$brukerID'></div>";
-                ?>
-                <select>
-                    <option name="true" id="1">Godkjent</option>
-                    <option name="false" id="0">Ikke godkjent</option>
+                
+                <select name="godkjent">
+                    <option value="1">Godkjent</option>
+                    <option value="0">Ikke godkjent</option>
                 </select>
                 <input type="submit" value="Gi tilbakemelding" name="submit">
             </form>
         </div>
     </body>
 </html>
-
-<?php
-if (isset($_POST['submit'])) {
-    leverTilbakemelding();
-}
-?>

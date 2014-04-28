@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 include 'dbconnect.incl.php';
@@ -14,26 +15,27 @@ function leggTilBruker() {
     $salt = salt();
     $passord = $_POST['passord'];
     $passordsjekk = $_POST['passordsjekk'];
-    if ($passord != $passordsjekk) {
-        return "Sjekk at passordene du skrev stemmer overens";
+    if ($passord != $passordsjekk || $passord == '' || trim($passord) == null) {
+        return "<strong>Sjekk at passordene du skrev stemmer overens.</strong>";
     }
-    $pw = hash("sha512", salt() . $passord);
+    $pw = hash("sha512", $salt . $passord);
     $navn = $_POST['navn'];
-    $rolle = intval($_POST['rolle']);
-    
-    $query = "INSERT INTO brukere (brukerID,email,navn,passord,salt,rolle) VALUES (DEFAULT,?,?,?,?)";
-    $statement = $con->prepare($query);
-    echo "HEI!" . mysqli_errno($statement);
-    $statement->bind_param("ssssi", $epost, $navn, $pw, $salt, $rolle);
-    echo "STIKK AV!" . mysqli_errno($statement);
-    if ($statement->execute()) {
-        echo 'Hei';
+    if (trim($epost) == null || $epost == '' || trim($navn) == null || $navn == '') {
+        return "<strong>Ingen av feltene kan v&aelig;re tomme,</strong>";
     }
+    $rolle = intval($_POST['rolle']);
+
+    $query = "INSERT INTO brukere (brukerID,email,navn,passord,salt,rolle) VALUES (DEFAULT,?,?,?,?,?)";
+    $statement = $con->prepare($query);
+    $statement->bind_param("ssssi", $epost, $navn, $pw, $salt, $rolle);
+    $statement->execute();
+
+    $brukerID = $statement->insert_id;
 
     $statement->close();
     disconnect($con);
-    
-    return "La til bruker ved navn: " . $navn;
+
+    return "<p>La til bruker " . $brukerID . ", med navn: " . $navn . "</p>";
 }
 
 function leggTilOving() {
@@ -75,19 +77,21 @@ function leverOving($ovingsID) {
 function leverTilbakemelding() {
     $con = connect();
 
-    $brukerID = $_POST['brukerID'];
-    $ovingsID = $_POST['ovingsID'];
-    $vurderingsbruker = $_POST['vurderingsbruker'];
+    $brukerID = $_SESSION['brukerTilVurdering'];
+    $ovingsID = $_SESSION['ovingsID'];
+    $vurderingsbruker = $_SESSION['brukerID'];
     $tilbakemelding = $_POST['tilbakemelding'];
+    echo "Innlogget bruker: $vurderingsbruker, ovingsID: $ovingsID, bruker til vurdering: $brukerID, tilbakemelding: $tilbakemelding";
 
     $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,DEFAULT))";
     $statement = $con->prepare($query);
     $statement->bind_param("iiisi", $brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding);
-    $statement->execute();
-
-    if (disconnect($con) && $statement->close()) {
-        return true;
+    if ($statement->execute()) {
+        $statement->close();
+        disconnect($con);
+        return "<p>Tilbakemeldingen er levert.</p>";
     }
+    return "<strong>Kunne ikke levere tilbakemeldingen, vennligst prøv senere.</strong>";
 }
 
 function godkjennOving() {
@@ -116,6 +120,7 @@ function getTilbakemelding() {
     $query = "SELECT tilbakemeldinger.brukerID, tilbakemeldinger.ovingsID, "
             . "tilbakemeldinger.tilbakemelding FROM tilbakemeldinger WHERE "
             . "tilbakemeldinger.brukerID=? AND tilbakemeldinger.ovingsID=?";
+
     $statement = $con->prepare($query);
     $statement->bind_param("ii", $brukerID, $ovingsID);
     $array = [NULL, NULL, NULL];
@@ -247,11 +252,11 @@ function getInnleveringerForVurdering($ovingsID) {
             . "ON innleveringer.brukerID = tilbakemeldinger.brukerID "
             . "AND innleveringer.ovingsID = tilbakemeldinger.ovingsID "
             . "WHERE innleveringer.brukerID != ? "
-            . "AND innleveringer.ovingsID = ? "
-            . "GROUP BY tilbakemeldinger.ovingsID";
+            . "AND (vurderingsbruker != ? OR vurderingsbruker IS NULL) "
+            . "AND innleveringer.ovingsID = ? GROUP BY tilbakemeldinger.ovingsID;";
 
     $statement = $con->prepare($query);
-    $statement->bind_param("ii", $brukerID, $ovingsID);
+    $statement->bind_param("iii", $brukerID, $brukerID, $ovingsID);
     $array = [];
 
     if ($statement->execute()) {

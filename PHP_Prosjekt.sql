@@ -63,5 +63,7 @@ SELECT innleveringer.ovingsID, innleveringer.brukerID, COUNT(tilbakemeldinger.br
 FROM innleveringer LEFT OUTER JOIN tilbakemeldinger
 ON innleveringer.brukerID = tilbakemeldinger.brukerID
 AND innleveringer.ovingsID = tilbakemeldinger.ovingsID
-WHERE innleveringer.brukerID != 101 AND innleveringer.ovingsID = 1
+WHERE innleveringer.brukerID != 102 
+AND (vurderingsbruker != 102 OR vurderingsbruker IS NULL)
+AND innleveringer.ovingsID = 1 
 GROUP BY tilbakemeldinger.ovingsID;

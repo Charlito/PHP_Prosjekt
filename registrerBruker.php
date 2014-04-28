@@ -10,6 +10,8 @@
     </head>
     <body>
         <div id="wrapper">
+            <h1>Registrering</h1>
+            
             <?php
             if (isset($_GET['result'])) {
                 echo "<p>" . $_GET['result'] . "</p>";
@@ -18,7 +20,7 @@
                 echo leggTilBruker();
             }
             ?>
-            <h1>Registrering</h1>
+            
             <table>
                 <form method="POST">
                     <thead>

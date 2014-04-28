@@ -19,7 +19,7 @@ function login() {
     $epost = ($_POST['epost']);
     $salt = getSalt($con, $epost);
     $pw = hash('sha512', $salt . $_POST['passord']);
-    echo $epost . '<br />' . $salt . '<br />' . $pw;
+    echo "$epost<br />$salt<br />$pw";
     
     $query = "SELECT brukerID FROM brukere WHERE email=? AND passord=?";
     $statement = $con->prepare($query);
@@ -28,6 +28,7 @@ function login() {
     $statement->store_result();
     $statement->bind_result($brukerID);
     $statement->fetch();
+    echo "<br />$brukerID";
     
     if ($statement->num_rows == 1) {
         session_start();
