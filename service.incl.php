@@ -4,6 +4,44 @@ session_start();
 
 include 'dbconnect.incl.php';
 
+function sjekkOmAdmin() {
+    $rolle = getRolle();
+    if ($rolle != 1) {
+        echo "<meta http-equiv='refresh' content='0; url=./index.php' />";
+    }
+}
+
+function adminMeny() {
+    echo '<nav>';
+    echo '<ul class="nav" id="nav">';
+    $headers = ['Registrer bruker', 'Legg til øving', 'Vis oversikt'];
+    $linker = ['registrerBruker', 'registrerOving', 'visOversikt'];
+    for ($i = 0; $i < count($linker); $i++) {
+        echo "<li><a href='$linker[$i].php'>$headers[$i]</a></li>";
+    }
+    echo '</ul>';
+    echo '</nav>';
+}
+
+function getRolle() {
+    $con = connect();
+
+    $brukerID = $_SESSION['brukerID'];
+
+    $query = "SELECT rolle FROM brukere WHERE brukerID=?";
+    $statement = $con->prepare($query);
+    $statement->bind_param("i", $brukerID);
+    $statement->execute();
+    $statement->store_result();
+    $statement->bind_result($rolle);
+    $statement->fetch();
+
+    $statement->close();
+
+    return $rolle;
+}
+
+
 function salt() {
     return bin2hex(openssl_random_pseudo_bytes(8));
 }
