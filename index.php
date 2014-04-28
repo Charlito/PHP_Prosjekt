@@ -9,6 +9,7 @@
         <div id="wrapper">
             <?php
             session_start();
+            
             if (isset($_SESSION['brukerID'])) {
                 echo "<meta http-equiv='refresh' content='0; url=./todo.php' />";
                 //header('Location: ./todo.php');
