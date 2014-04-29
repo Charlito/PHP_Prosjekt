@@ -18,20 +18,22 @@
             $tilbakemeldinger = getTilbakemelding();
             echo '<h1>Din innlevering for ' . $oving['navn'] . '</h1>';
             echo "<h2>Status</h2>";
-            $utskrift = '<p>&Oslash;vingen er ';
+            $temp = new DateTime($innlevering['innleveringsdato']);
+            $levert = $temp->format('d/m/Y');
+            $utskrift = "<p>Besvarelse levert den $levert.</p><p>&Oslash;vingen er ";
             if ($oving['godkjent']) {
                 $utskrift = $utskrift . 'godkjent.';
             } else {
                 $utskrift = $utskrift . 'ikke godkjent.';
             }
             echo $utskrift;
-            
+
             echo "<h2>Oppgavebeskrivelse</h2>";
             echo '<p>' . $oving['oppgavetekst'] . '</p>';
-            
+
             echo '<h2>Besvarelse</h2>';
             echo '<p>' . utf8_decode(htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE)) . '</p>';
-            
+            echo '';
             echo "<h2>Tilbakemeldinger</h2>";
             echo "<ol>";
             for ($i = 0; $i < count($tilbakemeldinger); $i++) {
