@@ -133,7 +133,7 @@ function leverOving($ovingsID) {
     }
     $statement->close();
     disconnect($con);
-    return "<strong>Kunne ikke levere &oslash;vingen, prøv igjen senere</strong>";
+    return "<div class='info'><p>Kunne ikke levere &oslash;vingen, prøv igjen senere</p></div>";
 }
 
 function leverTilbakemelding() {
@@ -143,6 +143,9 @@ function leverTilbakemelding() {
     $ovingsID = $_SESSION['ovingsID'];
     $vurderingsbruker = $_SESSION['brukerID'];
     $tilbakemelding = $_POST['tilbakemelding'];
+    if (str_word_count(trim($tilbakemelding)) < 50) {
+        return "<div class='warning'><p>Tilbakemeldingen må være minimum 50 ord.</p></div>";
+    }
     //echo "Innlogget bruker: $vurderingsbruker, ovingsID: $ovingsID, bruker til vurdering: $brukerID, tilbakemelding: $tilbakemelding";
 
     $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,DEFAULT)";
@@ -155,7 +158,7 @@ function leverTilbakemelding() {
     }
     $statement->close();
     disconnect($con);
-    return "<strong>Kunne ikke levere tilbakemeldingen, vennligst prøv senere.</strong>";
+    return "<div class='error'><p>Kunne ikke levere tilbakemeldingen, vennligst prøv senere.</p></div>";
 }
 
 function godkjennOving() {
