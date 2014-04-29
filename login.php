@@ -1,8 +1,5 @@
 <?php
 include 'login.incl.php';
-if (isset($_POST['login'])) {
-    login();
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,7 +25,11 @@ if (isset($_POST['login'])) {
 
                 <input type="submit" value="Logg inn" name="login">
             </form>
-
+            <?php
+            if (isset($_POST['login'])) {
+                login();
+            }
+            ?>
         </div>
     </body>
 </html>

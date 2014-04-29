@@ -15,11 +15,7 @@ sjekkOmAdmin();
         ?>
         <div id="wrapper">
             <h1>Registrering</h1>
-            <?php
-            if (isset($_POST['leggTilOving'])) {
-                echo leggTilOving();
-            }
-            ?>
+            
             <form method="POST">
                 <table>
                     <thead>
@@ -46,6 +42,11 @@ sjekkOmAdmin();
                     </tr>
                 </table>
             </form>
+            <?php
+            if (isset($_POST['leggTilOving'])) {
+                echo leggTilOving();
+            }
+            ?>
         </div>
     </body>
 </html>

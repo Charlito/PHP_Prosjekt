@@ -12,9 +12,6 @@
             $ovingsID = $_GET['ovingsID'];
             $oving = getOving($ovingsID);
             echo "<h1>" . $oving['navn'] . "</h1>";
-            if (isset($_POST['innlevering'])) {
-                echo leverOving($ovingsID);
-            }
             ?>
 
             <form method="POST">
@@ -23,7 +20,13 @@
                 <br />
                 <input type="submit" value="Lever &oslash;vingen">
             </form>
-
+            
+            <?php
+            if (isset($_POST['innlevering'])) {
+                echo leverOving($ovingsID);
+            }
+            ?>
+            
         </div>
     </body>
 </html>

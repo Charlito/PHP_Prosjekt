@@ -56,12 +56,12 @@ function leggTilBruker() {
     $passord = $_POST['passord'];
     $passordsjekk = $_POST['passordsjekk'];
     if ($passord != $passordsjekk || $passord == '' || trim($passord) == null) {
-        return "<strong>Sjekk at passordene du skrev stemmer overens.</strong>";
+        return "<div class='info'><p>Sjekk at passordene du skrev stemmer overens.</p></div>";
     }
     $pw = hash("sha512", $salt . $passord);
     $navn = $_POST['navn'];
     if (trim($epost) == null || $epost == '' || trim($navn) == null || $navn == '') {
-        return "<strong>Ingen av feltene kan v&aelig;re tomme,</strong>";
+        return "<div class='warning'><p>Ingen av feltene kan v&aelig;re tomme.</p></div>";
     }
     $rolle = intval($_POST['rolle']);
 
@@ -75,7 +75,7 @@ function leggTilBruker() {
     $statement->close();
     disconnect($con);
 
-    return "<p>La til bruker " . $brukerID . ", med navn: " . $navn . "</p>";
+    return "<div class='success'><p>La til bruker " . $brukerID . ", med navn: " . $navn . "</p></div>";
 }
 
 function antallDagerTilFrist($innleveringsfrist) {
@@ -93,10 +93,16 @@ function leggTilOving() {
 
     $navn = $_POST['navn'];
     $oppgavetekst = $_POST['oppgavetekst'];
+    if (trim($navn) == null || trim($navn) == '' 
+            || trim($oppgavetekst) == null || trim($oppgavetekst) == ''
+            || $_POST['innleveringsfrist'] == null) {
+        return "<div class='warning'><p>Ingen av feltene kan være tomme</p></div>";
+    }
+    
     $innleveringsfristInput = new DateTime($_POST['innleveringsfrist']);
     // Sjekker om datoen er gyldig
     if (new DateTime('-1day') > $innleveringsfristInput) {
-        return "<strong>Datoen er ugyldig.</strong>";
+        return "<div class='info'><p>Datoen er ugyldig.</p></div>";
     }
     // Formaterer datoen for lagring i databasen
     $innleveringsfrist = $innleveringsfristInput->format('Y-m-d');
@@ -113,7 +119,7 @@ function leggTilOving() {
     $statement->execute();
 
     if (disconnect($con) && $statement->close()) {
-        return "<p>La til øving med navn: " . $navn . "</p>";
+        return "<div class='success'><p>La til øving med navn: " . $navn . "</p></div>";
     }
 }
 
@@ -122,6 +128,9 @@ function leverOving($ovingsID) {
 
     $brukerID = $_SESSION['brukerID'];
     $innlevering = $_POST['innlevering'];
+    if (trim($innlevering) == null || trim($innlevering) == '') {
+        return "<div class='error'><p>Innleveringen kan ikke være tom!</p></div>";
+    }
 
     $query = "INSERT INTO innleveringer VALUES(?,?,?,DEFAULT,DEFAULT)";
     $statement = $con->prepare($query);
@@ -199,7 +208,7 @@ function getSpesifikkTilbakemelding($brukerTilVurdering, $ovingsID) {
     }
     $statement->close();
     disconnect($con);
-    echo "<strong>Kunne ikke hente tilbakemelding.</strong>";
+    echo "<div class='error'><p>Kunne ikke hente tilbakemelding.</p></div>";
 }
 
 function getTilbakemelding() {

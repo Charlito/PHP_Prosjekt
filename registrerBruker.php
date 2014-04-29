@@ -19,9 +19,6 @@
             if (isset($_GET['result'])) {
                 echo "<p>" . $_GET['result'] . "</p>";
             }
-            if (isset($_POST['registrer'])) {
-                echo leggTilBruker();
-            }
             ?>
             
             <table>
@@ -61,6 +58,13 @@
                     </tr>
                 </form>
             </table>
+            
+            <?php
+            if (isset($_POST['registrer'])) {
+                echo leggTilBruker();
+            }
+            ?>
+            
         </div>
     </body>
 </html>

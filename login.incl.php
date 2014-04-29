@@ -39,6 +39,6 @@ function login() {
             exit();
         }
     } else {
-        echo '<strong>Feil brukernavn eller passord.</strong>';
+        echo "<div class='warning'><p>Feil brukernavn eller passord.</p></div>";
     }
 }

@@ -27,7 +27,6 @@
             echo $utskrift;
             echo "<h2>Oppgavebeskrivelse</h2>";
             echo '<p>' . $oving['oppgavetekst'] . '</p>';
-            echo antallDagerTilFrist($oving['innleveringsfrist']);
             ?>
         </div>
     </body>
