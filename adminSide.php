@@ -16,16 +16,14 @@ sjekkOmAdmin();
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="stilark.css" />
-        <title></title>
+        <title>Admin side</title>
     </head>
     <body>
         <?php 
         adminMeny();
         ?>
-        <article>
+        <div id="wrapper">
             <p>Velkommen til lærersiden. Her kan du velge ulike handlinger i fra menyen. Du kan registrere nye brukere, legge til øvinger og vise oversikt over hvilke studenter som har levert øvingene og se/gi tilbakemeldinger til disse.</p>
-        </article>
-        <?php
-        ?>
+        </div>
     </body>
 </html>

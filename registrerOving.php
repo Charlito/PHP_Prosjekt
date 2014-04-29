@@ -18,7 +18,7 @@ sjekkOmAdmin();
         <?php
         adminMeny();
 
-        if (isset($_POST['registrer'])) {
+        if (isset($_POST['leggTilOving'])) {
             echo leggTilOving();
         }
         ?>
@@ -30,12 +30,16 @@ sjekkOmAdmin();
                     <th colspan="2">Registrer ny øving</th>
                     </thead>
                     <tr>
-                        <td><label for="ovingsNavn">Øvings navn:</label></td>
-                        <td><input name="ovingsNavn" type="text"></td>
+                        <td><label for="navn">Øvings navn:</label></td>
+                        <td><input name="navn" type="text"></td>
                     </tr>
                     <tr>
-                        <td><label for="innleveringsFrist">Innleveringsfrist:</label></td>
-                        <td><input type="text" name="innleveringsFrist"></td>
+                        <td><label for="oppgavetekst">Oppgavetekst:</label></td>
+                        <td><textarea name="oppgavetekst"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td><label for="innleveringsfrist">Innleveringsfrist: (YYYY-MM-DD)</label></td>
+                        <td><input type="text" name="innleveringsfrist"></td>
                     </tr>
                     <tr>
                         <td><label for="obligatorisk">Obligatorisk</label></td>

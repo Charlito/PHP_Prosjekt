@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-type" value="text/html; charset=UTF-8" />
+        <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
         <title>Innlevering</title>
         <link rel="stylesheet" href="stilark.css" />
         <?php include 'service.incl.php'; ?>
