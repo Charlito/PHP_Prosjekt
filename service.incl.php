@@ -340,22 +340,6 @@ function getOvingerInfo(){
     return $array;
 }
 
-function getOvingerInfo(){
-    $con = connect();
-
-    $query = "SELECT * FROM ovinger ORDER BY innleveringsfrist";
-    $result = mysqli_query($con, $query);
-    $antall = mysqli_num_rows($result);
-    $array = [];
-    for ($i = 0; $i < $antall; $i++) {
-        $assoc = mysqli_fetch_assoc($result);
-        $array[$i] = $assoc;
-    }
-    $result->close();
-    disconnect($con);
-    //print_r($array);
-    return $array;
-}
 
 function getStudenter(){
     
