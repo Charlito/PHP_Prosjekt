@@ -283,6 +283,64 @@ function getOvinger() {
 }
 
 function getOvingerInfo(){
+    $ovinger = getOvinger();
+    $ovingsID;
+    $con = connect();
+    $query1 = "select count(*) as manglendeTilbakemelding from "
+            . "(select innleveringer.brukerID,count(tilbakemeldinger.brukerID) "
+            . "from tilbakemeldinger "
+            . "right outer join innleveringer on "
+            . "tilbakemeldinger.brukerID = innleveringer.brukerID "
+            . "where innleveringer.ovingsID=? and innleveringer.godkjent=0 "
+            . "group by brukerID having count(*) < 3) as A";
+    $query2 = "select count(*) as antInnlevering, sum(godkjent) as antGodkjent "
+            . "from innleveringer where ovingsID=?";
+    $statement1 = $con->prepare($query1);
+    $statement1->bind_param("i", $ovingsID);
+    $statement2 = $con->prepare($query2);
+    $statement2->bind_param("i", $ovingsID);
+    //$query = "SELECT * FROM ovinger ORDER BY innleveringsfrist";
+    //$result = mysqli_query($con, $query);
+    //$antall = mysqli_num_rows($result);
+    $array = [];
+    for ($i = 0; $i < count($ovinger); $i++) {
+        $ovingsID = $ovinger[$i]['ovingsID'];
+        $statement1->execute();
+        $statement1->store_result();
+        $statement1->bind_result($manglendeTilbakemelding);
+        $statement1->fetch();
+        $statement2->execute();
+        $statement2->store_result();
+        $statement2->bind_result($antInnleveringer, $antGodkjente);
+        $statement2->fetch();
+        $array[$i] = [
+          'manglendeTilbakemelding' => $manglendeTilbakemelding,
+            'antInnleveringer' => $antInnleveringer,
+            'antGodkjente' => $antGodkjente
+        ];
+        
+    }
+    //erstatte null verdier med 0:
+    for($i=0;$i<count($array);$i++){
+        if($array[$i]['manglendeTilbakemelding'] == null){
+           $array[$i]['manglendeTilbakemelding'] = 0; 
+        }
+        if($array[$i]['antInnleveringer'] == null){
+           $array[$i]['antInnleveringer'] = 0; 
+        }
+        if($array[$i]['antGodkjente'] == null){
+           $array[$i]['antGodkjente'] = 0; 
+        }
+    }
+    
+    $statement1->close();
+    $statement2->close();
+    disconnect($con);
+    //print_r($array);
+    return $array;
+}
+
+function getOvingerInfo(){
     $con = connect();
 
     $query = "SELECT * FROM ovinger ORDER BY innleveringsfrist";
