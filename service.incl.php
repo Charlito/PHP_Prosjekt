@@ -83,7 +83,10 @@ function leggTilOving() {
     $oppgavetekst = $_POST['oppgavetekst'];
     // Må være på formen YYYY-MM-DD
     $innleveringsfrist = $_POST['innleveringsfrist'];
-    $obligatorisk = $_POST['obligatorisk'];
+    $obligatorisk = 0;
+    if(isset($_POST['obligatorisk'])){
+        $obligatorisk = 1;
+    }
 
     $query = "INSERT INTO ovinger VALUES(DEFAULT,?,?,?,?)";
     $statement = $con->prepare($query);
