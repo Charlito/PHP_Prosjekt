@@ -10,8 +10,24 @@ and open the template in the editor.
         <title></title>
     </head>
     <body>
+
         <?php
-        // put your code here
+        if (!isset($_GET['ovingsID'])) {
+            echo "<meta http-equiv='refresh' content='0; url=./visOversikt.php' />";
+        }
+        adminMeny();
         ?>
-    </body>
+
+
+        <table>
+            <thead>
+            <th>Student</th>
+            <th>Øving</th>
+            <th>Tilbakemeldinger</th>
+        </thead>
+        <?php
+        $brukereOving = getBrukereOving($_GET['ovingsID']) //TODO
+        ?>
+    </table>
+</body>
 </html>
