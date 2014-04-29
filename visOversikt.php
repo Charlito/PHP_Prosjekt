@@ -31,14 +31,13 @@ sjekkOmAdmin();
                 <?php
                 $ovinger = getOvinger();
                 $ovingInfo = getOvingerInfo();
-
                 for ($i = 0; $i < count($ovinger); $i++) {
                     echo "<tr>"
-                    . "<td><a href='visOvingOversikt.php?ovingsID=" . $ovinger[$i]['ovingsID'] ."'" . $ovinger[$i]['navn'] . "</td>"
+                    . "<td><a href='visOvingOversikt.php?ovingsID=" . $ovinger[$i]['ovingsID'] ."'>" . $ovinger[$i]['navn'] . "</a></td>"
                     . "<td>" . $ovingInfo[$i]['antInnleveringer'] . "</td>"
-                    . "<td>" . $ovingInfo[$i]['manglerTilbakemelding'] . "</td>"
-                    . "<td>" . $ovingInfo[$i]['antGodkjent'] . "</td>"
-                    . "<td><input type='submit' name='" . $ovinger[$i]['id'] . "'></td>"
+                    . "<td>" . $ovingInfo[$i]['manglendeTilbakemelding'] . "</td>"
+                    . "<td>" . $ovingInfo[$i]['antGodkjente'] . "</td>"
+                    . "<td><input type='submit' name='" . $ovinger[$i]['ovingsID'] . "'></td>"
                     . "</tr>";
                 }
                 // put your code here
