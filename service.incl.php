@@ -4,6 +4,8 @@ session_start();
 
 include 'dbconnect.incl.php';
 
+date_default_timezone_set('Europe/Oslo');
+
 function sjekkOmAdmin() {
     $rolle = getRolle();
     if ($rolle != 1) {
@@ -76,13 +78,29 @@ function leggTilBruker() {
     return "<p>La til bruker " . $brukerID . ", med navn: " . $navn . "</p>";
 }
 
+function antallDagerTilFrist($innleveringsfrist) {
+    $temp = new DateTime($innleveringsfrist);
+    $today = new DateTime('-1day');
+    $differanse = $today->diff($temp);
+    if ($differanse->invert) {
+        return -1;
+    }
+    return $differanse->days;
+}
+
 function leggTilOving() {
     $con = connect();
 
     $navn = $_POST['navn'];
     $oppgavetekst = $_POST['oppgavetekst'];
-    // Må være på formen YYYY-MM-DD
-    $innleveringsfrist = $_POST['innleveringsfrist'];
+    $innleveringsfristInput = new DateTime($_POST['innleveringsfrist']);
+    // Sjekker om datoen er gyldig
+    if (new DateTime('-1day') > $innleveringsfristInput) {
+        return "<strong>Datoen er ugyldig.</strong>";
+    }
+    // Formaterer datoen for lagring i databasen
+    $innleveringsfrist = $innleveringsfristInput->format('Y-m-d');
+    // Sørger for at en verdi blir satt for boolean-verdi obligatorisk for databasen
     $obligatorisk = 0;
     if(isset($_POST['obligatorisk'])){
         $obligatorisk = 1;

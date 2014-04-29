@@ -21,10 +21,13 @@
             } else {
                 $utskrift = $utskrift . 'ikke obligatorisk men ';
             }
-            $utskrift = $utskrift . 'm&aring; leveres innen ' . $oving['innleveringsfrist'];
+            $temp = new DateTime($oving['innleveringsfrist']);
+            $innleveringsfrist = $temp->format('d/m/Y');
+            $utskrift = $utskrift . 'm&aring; leveres innen ' . $innleveringsfrist;
             echo $utskrift;
             echo "<h2>Oppgavebeskrivelse</h2>";
-            echo '<p>' . $oving['oppgavetekst'] . '</p>'
+            echo '<p>' . $oving['oppgavetekst'] . '</p>';
+            echo antallDagerTilFrist($oving['innleveringsfrist']);
             ?>
         </div>
     </body>

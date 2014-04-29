@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <?php
 include './service.incl.php';
 sjekkOmAdmin();
@@ -31,15 +26,15 @@ sjekkOmAdmin();
                     <th colspan="2">Registrer ny øving</th>
                     </thead>
                     <tr>
-                        <td><label for="navn">Navn på øvingen:</label></td>
+                        <td><label for="navn">Navn på øvingen</label></td>
                         <td><input id="navn" name="navn" type="text" /></td>
                     </tr>
                     <tr>
-                        <td><label for="oppgavetekst">Oppgavetekst:</label></td>
+                        <td><label for="oppgavetekst">Oppgavetekst</label></td>
                         <td><textarea id="oppgavetekst" name="oppgavetekst"></textarea></td>
                     </tr>
                     <tr>
-                        <td><label for="innleveringsfrist">Innleveringsfrist: (YYYY-MM-DD)</label></td>
+                        <td><label for="innleveringsfrist">Innleveringsfrist</label></td>
                         <td><input id="innleveringsfrist" type="date" name="innleveringsfrist" /></td>
                     </tr>
                     <tr>

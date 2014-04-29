@@ -17,6 +17,7 @@
                 <th>Rett medstudent 1</th>
                 <th>Rett medstudent 2</th>
                 <th>Rett medstudent 3</th>
+                <th>Innleveringsfrist</th>
                 </thead>
                 <?php
                 //TODO: foreach øving:
@@ -54,9 +55,24 @@
                                     . $tilbakemeldinger[$i][0] . "'>Trekk tilfeldig</a></td>";
                         }
                     }
+                    
+                    $antallDagerTilFrist = antallDagerTilFrist($ovinger[$i]['innleveringsfrist']);
+                    if ($antallDagerTilFrist > 1) {
+                        $utskrift = $utskrift . "<td>$antallDagerTilFrist dager</td></tr>";
+                    } elseif ($antallDagerTilFrist == 1) {
+                        $utskrift = $utskrift . "<td>$antallDagerTilFrist dag</td></tr>";
+                    } elseif ($antallDagerTilFrist == 0) {
+                        $utskrift = $utskrift . "<td>Innen dagen</td></tr>";
+                    } else {
+                        $utskrift = $utskrift . "<td>Fristen har gått ut</td></tr>";
+                    }
+                    
                     echo $utskrift;
                 }
                 ?>
+                <tfoot>
+                    <tr><th colspan="6"><small>System levert av et lite team på to.</small></th></tr>
+                </tfoot>
             </table>
         </div>
     </body>

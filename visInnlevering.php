@@ -17,7 +17,7 @@
             <?php
             $tilbakemeldinger = getTilbakemelding();
             echo '<h1>Din innlevering for ' . $oving['navn'] . '</h1>';
-            
+            echo "<h2>Status</h2>";
             $utskrift = '<p>&Oslash;vingen er ';
             if ($oving['godkjent']) {
                 $utskrift = $utskrift . 'godkjent.';
