@@ -7,10 +7,14 @@
         <?php
         include 'service.incl.php';
         echo ensureLogin();
+        $bruker = getBruker();
         ?>
     </head>
     <body>
         <div id="wrapper">
+            <?php 
+            echo "<h1>Velkommen " . $bruker['navn'] . "</h1>";
+            ?>
             <table>
                 <thead>
                 <th>Gj&oslash;rem&aring;l</th>

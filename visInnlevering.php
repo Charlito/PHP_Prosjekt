@@ -21,11 +21,15 @@
             echo "<h2>Status</h2>";
             $temp = new DateTime($innlevering['innleveringsdato']);
             $levert = $temp->format('d/m/Y');
-            $utskrift = "<p>Besvarelse levert den $levert.</p><p>&Oslash;vingen er ";
-            if ($oving['godkjent']) {
-                $utskrift = $utskrift . 'godkjent.';
+            $utskrift = "<p>Besvarelse levert den $levert.</p><p>&Oslash;vingen er";
+            if (!$innlevering['rettet']) {
+                $utskrift = $utskrift . " ikke rettet.</p>";
             } else {
-                $utskrift = $utskrift . 'ikke godkjent.';
+                if ($oving['godkjent']) {
+                    $utskrift = $utskrift . ' godkjent.</p>';
+                } else {
+                    $utskrift = $utskrift . ' ikke godkjent.</p>';
+                }
             }
             echo $utskrift;
 
@@ -39,7 +43,13 @@
             echo "<ol>";
             for ($i = 0; $i < count($tilbakemeldinger); $i++) {
                 if ($tilbakemeldinger[$i]['tilbakemelding'] != null || $tilbakemeldinger[$i]['tilbakemelding'] != '') {
-                    echo "<li><p>" . utf8_decode(htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE)) . "</p></li>";
+                    $utskrift = "<li><p>" . utf8_decode(htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE));
+                    if ($tilbakemeldinger[$i]['godkjent']) {
+                        $utskrift = $utskrift . "<br />Resultat: Godkjent</p></li>";
+                    } else {
+                        $utskrift = $utskrift . "<br />Resultat: Ikke godkjent</p></li>";
+                    }
+                    echo $utskrift;
                 } else {
                     echo "<li><p>Ingen tilbakemelding</p></li>";
                 }

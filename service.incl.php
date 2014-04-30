@@ -14,16 +14,16 @@ function sjekkOmAdmin() {
 }
 
 function ensureLogin() {
+    if (!isset($_SESSION['brukerID'])) {
+        $_SESSION['error'] = "<div class='info'><p>Vennligst logg inn.</p></div>";
+        return "<meta http-equiv='refresh' content='0; url=./login.php'";
+    }
+    
     if (isset($_SESSION['sist_aktiv']) && (time() - $_SESSION['sist_aktiv'] > 3600)) {
         session_destroy();
         session_unset();
         session_start();
         $_SESSION['error'] = "<div class='info'><p>Du var inaktiv for lenge, sesjonen er avsluttet.</p></div>";
-        return "<meta http-equiv='refresh' content='0; url=./login.php'";
-    }
-
-    if (!isset($_SESSION['brukerID'])) {
-        $_SESSION['error'] = "<div class='info'><p>Vennligst logg inn.</p></div>";
         return "<meta http-equiv='refresh' content='0; url=./login.php'";
     }
     
@@ -58,6 +58,32 @@ function getRolle() {
     $statement->close();
 
     return $rolle;
+}
+
+function getBruker() {
+    $con = connect();
+    
+    $brukerID = $_SESSION['brukerID'];
+    
+    $query = "SELECT email, navn, rolle FROM brukere WHERE brukerID=?";
+    $statement = $con->prepare($query);
+    $statement->bind_param("i", $brukerID);
+    $assoc = [];
+    if ($statement->execute()) {
+        $statement->bind_result($email, $navn, $rolle);
+        $statement->fetch();
+        $assoc = [
+            'email' => $email,
+            'navn' => $navn,
+            'rolle' => $rolle
+        ];
+        $statement->close();
+        disconnect($con);
+        return $assoc;
+    }
+    $statement->close();
+    disconnect($con);
+    echo "<div class='error'><p>Kunne ikke hente bruker.</p></div>";
 }
 
 
@@ -149,7 +175,7 @@ function leverOving($ovingsID) {
         return "<div class='error'><p>Innleveringen kan ikke være tom!</p></div>";
     }
 
-    $query = "INSERT INTO innleveringer VALUES(?,?,?,DEFAULT,DEFAULT)";
+    $query = "INSERT INTO innleveringer VALUES(?,?,?,DEFAULT,DEFAULT,DEFAULT)";
     $statement = $con->prepare($query);
     $statement->bind_param("iis", $brukerID, $ovingsID, $innlevering);
     if ($statement->execute()) {
@@ -169,14 +195,16 @@ function leverTilbakemelding() {
     $ovingsID = $_SESSION['ovingsID'];
     $vurderingsbruker = $_SESSION['brukerID'];
     $tilbakemelding = $_POST['tilbakemelding'];
-    if (str_word_count(trim($tilbakemelding)) < 50) {
-        return "<div class='warning'><p>Tilbakemeldingen må være minimum 50 ord.</p></div>";
+    $godkjent = $_POST['godkjent'];
+    if (str_word_count($tilbakemelding) < 20) {
+        return "<div class='warning'><p>Tilbakemeldingen må være minimum 20 ord. (Du skrev " 
+        . str_word_count($tilbakemelding) . ")</p></div>";
     }
     //echo "Innlogget bruker: $vurderingsbruker, ovingsID: $ovingsID, bruker til vurdering: $brukerID, tilbakemelding: $tilbakemelding";
 
-    $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,DEFAULT)";
+    $query = "INSERT INTO tilbakemeldinger VALUES(?,?,?,?,?,DEFAULT)";
     $statement = $con->prepare($query);
-    $statement->bind_param("iiis", $brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding);
+    $statement->bind_param("iiisi", $brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding, $godkjent);
     if ($statement->execute()) {
         $statement->close();
         disconnect($con);
@@ -199,7 +227,7 @@ function godkjennOving() {
     $statement->execute();
 
     if (disconnect($con) && $statement->close()) {
-        return true;
+        return "<div id=class'success'><p>Øvingen er nå godkjent.</p></div>";
     }
 }
 
@@ -208,15 +236,16 @@ function getSpesifikkTilbakemelding($brukerTilVurdering, $ovingsID) {
 
     $brukerID = $_SESSION['brukerID'];
 
-    $query = "SELECT tilbakemelding, nytteverdi FROM tilbakemeldinger "
+    $query = "SELECT tilbakemelding, godkjent, nytteverdi FROM tilbakemeldinger "
             . "WHERE brukerID=? AND ovingsID=? AND vurderingsbruker=?";
     $statement = $con->prepare($query);
     $statement->bind_param("iii", $brukerTilVurdering, $ovingsID, $brukerID);
     if ($statement->execute()) {
-        $statement->bind_result($tilbakemelding, $nytteverdi);
+        $statement->bind_result($tilbakemelding, $godkjent, $nytteverdi);
         $statement->fetch();
         $assoc = [
             'tilbakemelding' => $tilbakemelding,
+            'godkjent' => $godkjent,
             'nytteverdi' => $nytteverdi
         ];
         $statement->close();
@@ -235,22 +264,23 @@ function getTilbakemelding() {
     $brukerID = $_SESSION['brukerID'];
     $ovingsID = $_SESSION['ovingsID'];
 
-    $query = "SELECT tilbakemeldinger.brukerID, tilbakemeldinger.ovingsID, "
-            . "tilbakemeldinger.tilbakemelding FROM tilbakemeldinger WHERE "
-            . "tilbakemeldinger.brukerID=? AND tilbakemeldinger.ovingsID=?";
+    $query = "SELECT brukerID, ovingsID, "
+            . "tilbakemelding, godkjent FROM tilbakemeldinger WHERE "
+            . "brukerID=? AND ovingsID=?";
 
     $statement = $con->prepare($query);
     $statement->bind_param("ii", $brukerID, $ovingsID);
     $array = [NULL, NULL, NULL];
     if ($statement->execute()) {
         $statement->store_result();
-        $statement->bind_result($brukerID, $ovingsID, $tilbakemelding);
+        $statement->bind_result($brukerID, $ovingsID, $tilbakemelding, $godkjent);
         for ($i = 0; $i < $statement->num_rows; $i++) {
             $statement->fetch();
             $array[$i] = [
                 'brukerID' => $brukerID,
                 'ovingsID' => $ovingsID,
-                'tilbakemelding' => $tilbakemelding];
+                'tilbakemelding' => $tilbakemelding,
+                'godkjent' => $godkjent];
         }
         $statement->close();
         disconnect($con);
@@ -462,17 +492,18 @@ function getInnleveringerForVurdering($ovingsID) {
 function getInnlevering($ovingsID, $brukerID) {
     $con = connect();
 
-    $query = "SELECT innlevering, innleveringsdato, godkjent FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
+    $query = "SELECT innlevering, innleveringsdato, rettet, godkjent FROM innleveringer WHERE brukerID=? AND ovingsID=? ORDER BY innleveringsdato";
     $statement = $con->prepare($query);
     $statement->bind_param("ii", $brukerID, $ovingsID);
     if ($statement->execute()) {
-        $statement->bind_result($innlevering, $innleveringsdato, $godkjent);
+        $statement->bind_result($innlevering, $innleveringsdato, $rettet, $godkjent);
         $statement->fetch();
         $statement->close();
         disconnect($con);
         $assoc = [
             'innlevering' => htmlspecialchars($innlevering, ENT_SUBSTITUTE),
             'innleveringsdato' => $innleveringsdato,
+            'rettet' => $rettet,
             'godkjent' => $godkjent];
         return $assoc;
     }

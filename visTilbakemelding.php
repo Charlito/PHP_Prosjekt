@@ -26,7 +26,12 @@
             echo "<h2>Besvarelse</h2>";
             echo "<p>" . utf8_decode(htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE)) . "</p>";
             echo "<h2>Din tilbakemelding</h2>";
-            echo "<p>" . $tilbakemelding['tilbakemelding'] . "</p>";
+            echo "<p>" . $tilbakemelding['tilbakemelding'] . "<br />Resultat: "; 
+            if ($tilbakemelding['godkjent']) {
+                echo "Godkjent</p>";
+            } else {
+                echo "Ikke godkjent</p>";
+            }
             ?>
 
         </div>
