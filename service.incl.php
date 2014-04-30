@@ -215,19 +215,16 @@ function leverTilbakemelding() {
     return "<div class='error'><p>Kunne ikke levere tilbakemeldingen, vennligst prøv senere.</p></div>";
 }
 
-function godkjennOving() {
+function godkjennOving($brukerID, $ovingsID, $godkjent) {
     $con = connect();
 
-    $brukerID = $_POST['brukerID'];
-    $ovingsID = $_POST['ovingsID'];
-
-    $query = "UPDATE innleveringer SET godkjent=true WHERE brukerID=? AND ovingsID=?";
+    $query = "UPDATE innleveringer SET godkjent=? WHERE brukerID=? AND ovingsID=?";
     $statement = $con->prepare($query);
-    $statement->bind_param("ii", $brukerID, $ovingsID);
+    $statement->bind_param("iii",$godkjent, $brukerID, $ovingsID);
     $statement->execute();
 
     if (disconnect($con) && $statement->close()) {
-        return "<div class='success'><p>Øvingen er nå godkjent.</p></div>";
+        return "<div class='success'><p>Øvingen er nå rettet.</p></div>";
     }
 }
 

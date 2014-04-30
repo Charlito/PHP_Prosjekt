@@ -7,10 +7,21 @@
         <?php
         include 'service.incl.php';
         echo ensureLogin();
+        
+        if(isset($_POST['svar'])){
+            godkjennOving( $_SESSION['brukerTilVurdering'], $_SESSION['ovingsID'], $_POST['godkjent']);
+        }
+        
         $ovingsID = $_GET['ovingsID'];
         $_SESSION['ovingsID'] = $ovingsID;
         $oving = getOving($ovingsID);
-        $innlevering = getInnlevering($ovingsID, $_SESSION['brukerID']);
+        
+        $brukerID = $_SESSION['brukerID'];
+        if (getRolle() == 1) {
+            $brukerID = $_GET['brukerTilVurdering'];
+            $_SESSION['brukerTilVurdering'] = $brukerID;
+        }
+        $innlevering = getInnlevering($ovingsID, $brukerID);
         ?>
     </head>
     <body>
@@ -55,6 +66,16 @@
                 }
             }
             echo "</ol>";
+            
+            if (getRolle() == 1) {
+                echo "<form method='POST'>"
+                . "<select name='godkjent'>"
+                . "<option value='1'>Godkjent</option>"
+                . "<option value='0'>Ikke godkjent</option>"
+                . "</select>"
+                . "<input type='submit' value='Rett øving' name='svar'>"
+                . "</form>";
+            }
             ?>
         </div>
     </body>
