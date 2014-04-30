@@ -240,7 +240,7 @@ function godkjennOving($brukerID, $ovingsID, $godkjent) {
     $statement->execute();
 
     if (disconnect($con) && $statement->close()) {
-        return "<div class='success'><p>Øvingen er nå rettet.</p></div>";
+        return "<meta http-equiv='refresh' content='0; url=./visOvingOversikt.php?ovingsID=$ovingsID' />";
     }
 }
 
@@ -287,11 +287,11 @@ function getSpesifikkTilbakemelding($brukerTilVurdering, $ovingsID) {
     echo "<div class='error'><p>Kunne ikke hente tilbakemelding.</p></div>";
 }
 
-function getTilbakemelding() {
+function getTilbakemelding($brukerID) {
     $con = connect();
 
     // OBS! Husk å endre tilbake til $_SESSION etter testing.
-    $brukerID = $_SESSION['brukerID'];
+    //$brukerID = $_SESSION['brukerID'];
     $ovingsID = $_SESSION['ovingsID'];
 
     $query = "SELECT brukerID, ovingsID, "
