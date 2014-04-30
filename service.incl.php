@@ -104,7 +104,7 @@ function leggTilBruker() {
     $pw = hash("sha512", $salt . $passord);
     $navn = $_POST['navn'];
     if (trim($epost) == null || $epost == '' || trim($navn) == null || $navn == '') {
-        return "<div class='warning'><p>Ingen av feltene kan v&aelig;re tomme.</p></div>";
+        return "<div class='warning'><p>Ingen av feltene kan være tomme.</p></div>";
     }
     $rolle = intval($_POST['rolle']);
 
@@ -263,7 +263,7 @@ function getSpesifikkTilbakemelding($brukerTilVurdering, $ovingsID) {
         $statement->bind_result($tilbakemelding, $godkjent, $nytteverdi);
         $statement->fetch();
         $assoc = [
-            'tilbakemelding' => $tilbakemelding,
+            'tilbakemelding' => htmlspecialchars($tilbakemelding),
             'godkjent' => $godkjent,
             'nytteverdi' => $nytteverdi
         ];
@@ -298,7 +298,7 @@ function getTilbakemelding() {
             $array[$i] = [
                 'brukerID' => $brukerID,
                 'ovingsID' => $ovingsID,
-                'tilbakemelding' => $tilbakemelding,
+                'tilbakemelding' => htmlspecialchars($tilbakemelding),
                 'godkjent' => $godkjent];
         }
         $statement->close();
@@ -468,7 +468,7 @@ function getOving($ovingsID) {
         disconnect($con);
         $assoc = [
             'navn' => $navn,
-            'oppgavetekst' => $oppgavetekst,
+            'oppgavetekst' => htmlspecialchars($oppgavetekst),
             'innleveringsfrist' => $innleveringsfrist,
             'obligatorisk' => $obligatorisk];
         return $assoc;
