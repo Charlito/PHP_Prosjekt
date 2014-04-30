@@ -395,6 +395,41 @@ function getOvingerInfo(){
     //print_r($array);
     return $array;
 }
+function getBrukereOving($ovingsID) {
+    $con = connect();
+    $query = "select * from("
+            . "(select brukerID, navn from brukere) as A "
+            . "left outer join "
+            . "(select count(*) as levert, godkjent, brukerID from innleveringer where ovingsID=? group by brukerID) as B on A.brukerID = B.brukerID  "
+            . "left outer join "
+            . "(select count(*) as gittTilbakemeldinger, vurderingsbruker from tilbakemeldinger where ovingsID=? group by vurderingsbruker) as C on A.brukerID = C.vurderingsbruker "
+            . "left outer join "
+            . "(select count(*) as faattTilbakemeldinger, brukerID from tilbakemeldinger where ovingsID=? group by brukerID) as D on A.brukerID = D.brukerID)";
+    
+    $statement = $con->prepare($query);
+    $statement->bind_param("iii", $ovingsID , $ovingsID , $ovingsID);
+    $statement->execute();
+    $statement->store_result();
+    $array = [];
+    $statement->bind_result($brukerID, $navn, $levert, $godkjent, $null, $gittTilbakemeldinger, $null, $fåttTilbakemeldinger, $null );
+    for($i=0;$i<$statement->num_rows;$i++){
+        $statement->fetch();
+        $array[$i] = [
+          'brukerID' => $brukerID,
+            'navn' => $navn,
+            'levert' => $levert,
+            'gittTilbakemeldinger' =>$gittTilbakemeldinger,
+            'fåttTilbakemeldinger' =>$fåttTilbakemeldinger,
+            'godkjent' => $godkjent
+        ];
+        
+    }
+    $statement->close();
+    disconnect($con);
+    return $array;
+            
+}
+
 
 
 function getStudenter(){

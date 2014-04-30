@@ -10,13 +10,23 @@
         ?>
     </head>
     <body>
+        <?php
+        $rolle = getRolle();
+        if ($rolle == 1) {
+            adminMeny();
+        }
+        ?>
         <div id="wrapper">
             <?php
             $brukerID = $_SESSION['brukerID'];
             $ovingsID = $_GET['ovingsID'];
             $oving = getOving($ovingsID);
             $innleveringer = getInnleveringerForVurdering($ovingsID);
-            $brukerTilVurdering = $innleveringer[0]['brukerID'];
+            if ($rolle == 0) {
+                $brukerTilVurdering = $innleveringer[0]['brukerID'];
+            } else {
+                $brukerTilVurdering = $_GET['brukerTilVurdering'];
+            }
             $innlevering = getInnlevering($innleveringer[0]['ovingsID'], $brukerTilVurdering);
 
             $_SESSION['brukerTilVurdering'] = $brukerTilVurdering;
