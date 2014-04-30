@@ -7,15 +7,19 @@
         <?php
         include 'service.incl.php';
         echo ensureLogin();
-        
-        if(isset($_POST['svar'])){
-            godkjennOving( $_SESSION['brukerTilVurdering'], $_SESSION['ovingsID'], $_POST['godkjent']);
+
+        if (isset($_POST['svar'])) {
+            echo godkjennOving($_SESSION['brukerTilVurdering'], $_SESSION['ovingsID'], $_POST['godkjent']);
         }
-        
+
         $ovingsID = $_GET['ovingsID'];
         $_SESSION['ovingsID'] = $ovingsID;
         $oving = getOving($ovingsID);
-        
+        $tilbakemeldinger = getTilbakemelding($brukerID);
+
+        if (isset($_POST['lagre'])) {
+            echo lagreNytteverdi($ovingsID, $tilbakemeldinger);
+        }
         $brukerID = $_SESSION['brukerID'];
         if (getRolle() == 1) {
             $brukerID = $_GET['brukerTilVurdering'];
@@ -27,7 +31,6 @@
     <body>
         <div id="wrapper">
             <?php
-            $tilbakemeldinger = getTilbakemelding();
             echo '<h1>Din innlevering for ' . $oving['navn'] . '</h1>';
             echo "<h2>Status</h2>";
             $temp = new DateTime($innlevering['innleveringsdato']);
@@ -50,23 +53,42 @@
             echo '<h2>Besvarelse</h2>';
             echo '<p>' . htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE) . '</p>';
             echo '';
+
             echo "<h2>Tilbakemeldinger</h2>";
-            echo "<ol>";
+            echo "<form method='POST'> ";
+            echo "<table>";
+            echo "<thead>"
+            . "<th>Tilbakemelding</th>"
+            . "<th>Resultat</th>"
+            . "<th>Nytteverdi</th>"
+            . "</thead>";
             for ($i = 0; $i < count($tilbakemeldinger); $i++) {
                 if ($tilbakemeldinger[$i]['tilbakemelding'] != null || $tilbakemeldinger[$i]['tilbakemelding'] != '') {
-                    $utskrift = "<li><p>" . htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE);
+                    $utskrift = "<tr><td>" . htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE);
                     if ($tilbakemeldinger[$i]['godkjent']) {
-                        $utskrift = $utskrift . "<br />Resultat: Godkjent</p></li>";
+                        $utskrift = $utskrift . "</td><td>Resultat: Godkjent</td>";
                     } else {
-                        $utskrift = $utskrift . "<br />Resultat: Ikke godkjent</p></li>";
+                        $utskrift = $utskrift . "</td><td>Resultat: Ikke godkjent</td>";
                     }
                     echo $utskrift;
+
+                    if (getRolle() == 0) {
+
+                        echo "<td><select name='nytteverdi$i'>"
+                        . "<option value=0>Velg nytteverdi</option>"
+                        . "<option value=1>Lite nyttig</option>"
+                        . "<option value=2>Nyttig</option>"
+                        . "<option value=3>Meget nyttig</option>"
+                        . "</select></td>"
+                        . "</tr>";
+                    }
                 } else {
-                    echo "<li><p>Ingen tilbakemelding</p></li>";
+                    echo "<tr><td colspan='3'>Ingen tilbakemelding</td></tr>";
                 }
             }
-            echo "</ol>";
-            
+            echo "<tfoot><tr><td colspan='3'><input type='submit' value='Lagre' name='lagre' /></td></tr></tfoot>";
+            echo "</table>";
+            echo "</form>";
             if (getRolle() == 1) {
                 echo "<form method='POST'>"
                 . "<select name='godkjent'>"
