@@ -25,9 +25,6 @@
                 <th>Innleveringsfrist</th>
                 </thead>
                 <?php
-                //TODO: foreach øving:
-                //  if(isDone(øving))visBesvarelse; else leverBesvarelse;
-                //  for(i=1:3) if(harGittTilbakemelding) visTilbakemelding; else trekkTilfeldig;
                 $ovinger = getOvinger();
                 $innleveringer = getInnleveringer();
                 $tilbakemeldinger = getAlleTilbakemeldinger();

@@ -37,13 +37,13 @@
             echo '<p>' . $oving['oppgavetekst'] . '</p>';
 
             echo '<h2>Besvarelse</h2>';
-            echo '<p>' . utf8_decode(htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE)) . '</p>';
+            echo '<p>' . htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE) . '</p>';
             echo '';
             echo "<h2>Tilbakemeldinger</h2>";
             echo "<ol>";
             for ($i = 0; $i < count($tilbakemeldinger); $i++) {
                 if ($tilbakemeldinger[$i]['tilbakemelding'] != null || $tilbakemeldinger[$i]['tilbakemelding'] != '') {
-                    $utskrift = "<li><p>" . utf8_decode(htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE));
+                    $utskrift = "<li><p>" . htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE);
                     if ($tilbakemeldinger[$i]['godkjent']) {
                         $utskrift = $utskrift . "<br />Resultat: Godkjent</p></li>";
                     } else {

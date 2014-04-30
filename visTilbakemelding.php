@@ -24,7 +24,7 @@
             echo "<h2>Oppgavetekst</h2>";
             echo "<p>" . $oving['oppgavetekst'] . "</p>";
             echo "<h2>Besvarelse</h2>";
-            echo "<p>" . utf8_decode(htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE)) . "</p>";
+            echo "<p>" . htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE) . "</p>";
             echo "<h2>Din tilbakemelding</h2>";
             echo "<p>" . $tilbakemelding['tilbakemelding'] . "<br />Resultat: "; 
             if ($tilbakemelding['godkjent']) {
