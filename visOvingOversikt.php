@@ -42,6 +42,7 @@ sjekkOmAdmin();
                 <th>Gi tilbakemelding</th>
                 <th>Vis/rett øving</th>
                 </thead>
+                
                 <?php
                 $brukereOving = getBrukereOving($_GET['ovingsID']);
 
@@ -50,8 +51,10 @@ sjekkOmAdmin();
                     . "<td>" . $brukereOving[$i]['navn'] . "</td>";
                     if (isset($brukereOving[$i]['levert'])) {
                         echo "<td>Levert</td>";
+                        $buttonDisable = "";
                     } else {
                         echo "<td>Ikke levert</td>";
+                        $buttonDisable = "disabled='true'";
                     }
                     if (isset($brukereOving[$i]['gittTilbakemeldinger'])) {
                         echo "<td>" . $brukereOving[$i]['gittTilbakemeldinger'] . "</td>";
@@ -68,9 +71,8 @@ sjekkOmAdmin();
                         $godkjent = "Godkjent";
                     }
                     echo "<td>$godkjent</td>";
-                    echo "<td><a href='tilbakemeldingOving.php?brukerTilVurdering=" . $brukereOving[$i]['brukerID'] . "&ovingsID=". $_GET['ovingsID'] . "'><button>Velg</button></a></td>";
-                    echo "<td><a href='visOving.php?brukerTilVurdering=" . $brukereOving[$i]['brukerID'] . "&ovingsID=". $_GET['ovingsID'] . "'><button>Velg</button></a></td>";
-                    echo "<td></td>";
+                    echo "<td><a href='tilbakemeldingOving.php?brukerTilVurdering=" . $brukereOving[$i]['brukerID'] . "&ovingsID=". $_GET['ovingsID'] . "'><button $buttonDisable>Velg</button></a></td>";
+                    echo "<td><a href='visInnlevering.php?brukerTilVurdering=" . $brukereOving[$i]['brukerID'] . "&ovingsID=". $_GET['ovingsID'] . "'><button $buttonDisable>Velg</button></a></td>";
                     echo "</tr>";
                 }
                 ?>
