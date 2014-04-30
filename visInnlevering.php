@@ -15,9 +15,9 @@
         $ovingsID = $_GET['ovingsID'];
         $_SESSION['ovingsID'] = $ovingsID;
         $oving = getOving($ovingsID);
-        
 
-        
+
+
         $brukerID = $_SESSION['brukerID'];
         if (getRolle() == 1) {
             $brukerID = $_GET['brukerTilVurdering'];
@@ -84,7 +84,7 @@
                         . "</select></td>"
                         . "</tr>";
                     } else {
-                        switch ($tilbakemeldinger[$i]['nytteverdi']){
+                        switch ($tilbakemeldinger[$i]['nytteverdi']) {
                             case 0:
                                 $nytteverdi = "Ikke oppgitt";
                                 break;
@@ -98,14 +98,16 @@
                                 $nytteverdi = "Meget nyttig";
                                 break;
                         }
-                        
+
                         echo "<td>$nytteverdi</td>";
                     }
                 } else {
                     echo "<tr><td colspan='3'>Ingen tilbakemelding</td></tr>";
                 }
             }
-            echo "<tfoot><tr><td colspan='3'><input type='submit' value='Lagre' name='lagre' /></td></tr></tfoot>";
+            if (getRolle() == 0) {
+                echo "<tfoot><tr><td colspan='3'><input type='submit' value='Lagre' name='lagre' /></td></tr></tfoot>";
+            }
             echo "</table>";
             echo "</form>";
             if (getRolle() == 1) {
