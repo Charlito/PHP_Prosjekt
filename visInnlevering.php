@@ -17,15 +17,16 @@
         $oving = getOving($ovingsID);
         
 
-        if (isset($_POST['lagre'])) {
-            echo lagreNytteverdi($ovingsID, $tilbakemeldinger);
-        }
+        
         $brukerID = $_SESSION['brukerID'];
         if (getRolle() == 1) {
             $brukerID = $_GET['brukerTilVurdering'];
             $_SESSION['brukerTilVurdering'] = $brukerID;
         }
         $tilbakemeldinger = getTilbakemelding($brukerID);
+        if (isset($_POST['lagre'])) {
+            echo lagreNytteverdi($ovingsID, $tilbakemeldinger);
+        }
         $innlevering = getInnlevering($ovingsID, $brukerID);
         ?>
     </head>
