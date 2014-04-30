@@ -15,7 +15,7 @@
         $ovingsID = $_GET['ovingsID'];
         $_SESSION['ovingsID'] = $ovingsID;
         $oving = getOving($ovingsID);
-        $tilbakemeldinger = getTilbakemelding($brukerID);
+        
 
         if (isset($_POST['lagre'])) {
             echo lagreNytteverdi($ovingsID, $tilbakemeldinger);
@@ -25,6 +25,7 @@
             $brukerID = $_GET['brukerTilVurdering'];
             $_SESSION['brukerTilVurdering'] = $brukerID;
         }
+        $tilbakemeldinger = getTilbakemelding($brukerID);
         $innlevering = getInnlevering($ovingsID, $brukerID);
         ?>
     </head>
