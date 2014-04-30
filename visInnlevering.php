@@ -66,9 +66,9 @@
                 if ($tilbakemeldinger[$i]['tilbakemelding'] != null || $tilbakemeldinger[$i]['tilbakemelding'] != '') {
                     $utskrift = "<tr><td>" . htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE);
                     if ($tilbakemeldinger[$i]['godkjent']) {
-                        $utskrift = $utskrift . "</td><td>Resultat: Godkjent</td>";
+                        $utskrift = $utskrift . "</td><td>Godkjent</td>";
                     } else {
-                        $utskrift = $utskrift . "</td><td>Resultat: Ikke godkjent</td>";
+                        $utskrift = $utskrift . "</td><td>Ikke godkjent</td>";
                     }
                     echo $utskrift;
 
