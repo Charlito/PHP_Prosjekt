@@ -41,7 +41,7 @@
             if (!$innlevering['rettet']) {
                 $utskrift = $utskrift . " ikke rettet.</p>";
             } else {
-                if ($oving['godkjent']) {
+                if ($innlevering['godkjent']) {
                     $utskrift = $utskrift . ' godkjent.</p>';
                 } else {
                     $utskrift = $utskrift . ' ikke godkjent.</p>';
@@ -53,7 +53,7 @@
             echo '<p>' . $oving['oppgavetekst'] . '</p>';
 
             echo '<h2>Besvarelse</h2>';
-            echo '<p>' . htmlspecialchars($innlevering['innlevering'], ENT_SUBSTITUTE) . '</p>';
+            echo '<p>' . htmlspecialchars($innlevering['innlevering'], 8) . '</p>';
             echo '';
 
             echo "<h2>Tilbakemeldinger</h2>";
@@ -66,7 +66,7 @@
             . "</thead>";
             for ($i = 0; $i < count($tilbakemeldinger); $i++) {
                 if ($tilbakemeldinger[$i]['tilbakemelding'] != null || $tilbakemeldinger[$i]['tilbakemelding'] != '') {
-                    $utskrift = "<tr><td>" . htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], ENT_SUBSTITUTE);
+                    $utskrift = "<tr><td>" . htmlspecialchars($tilbakemeldinger[$i]['tilbakemelding'], 8);
                     if ($tilbakemeldinger[$i]['godkjent']) {
                         $utskrift = $utskrift . "</td><td>Godkjent</td>";
                     } else {

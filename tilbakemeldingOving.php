@@ -21,9 +21,8 @@
             $brukerID = $_SESSION['brukerID'];
             $ovingsID = $_GET['ovingsID'];
             $oving = getOving($ovingsID);
-            echo $ovingsID;
             $innleveringer = getInnleveringerForVurdering($ovingsID);
-            print_r($innleveringer);
+            //print_r($innleveringer);
             if ($rolle == 0) {
                 $brukerTilVurdering = $innleveringer[0]['brukerID'];
                 $_SESSION['brukerTilVurdering'] = $brukerTilVurdering;
@@ -58,7 +57,13 @@
                 echo "<h2>Din tilbakemelding: </h2>";
             }
             ?>
-            <form method="POST" action="tilbakemeldingOving.php?ovingsID=<?php echo $ovingsID; ?>">
+            <form method="POST" action="tilbakemeldingOving.php?ovingsID=
+                <?php 
+                echo $ovingsID;
+                if ($rolle == 1) {
+                    echo "&brukerTilVurdering=$brukerTilVurdering";
+                }
+                ?>">
                 <textarea id="tilbakemelding" name="tilbakemelding"></textarea>
 
                 <select name="godkjent">

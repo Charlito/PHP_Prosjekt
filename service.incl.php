@@ -13,7 +13,7 @@ if (isset($_GET['logout'])) {
 function sjekkOmAdmin() {
     $rolle = getRolle();
     if ($rolle != 1) {
-        echo "<meta http-equiv='refresh' content='0; url=./index.php' />";
+        echo "<meta http-equiv='refresh' content='0; url=./_index.php' />";
     }
 }
 
@@ -43,8 +43,8 @@ function logout() {
 function adminMeny() {
     echo '<nav>';
     echo '<ul class="nav" id="nav">';
-    $headers = ['Registrer bruker', 'Legg til øving', 'Vis oversikt', 'Logg ut'];
-    $linker = ['registrerBruker', 'registrerOving', 'visOversikt', '?logout=1'];
+    $headers = array('Registrer bruker', 'Legg til øving', 'Vis oversikt', 'Logg ut');
+    $linker = array('registrerBruker', 'registrerOving', 'visOversikt', '?logout=1');
     for ($i = 0; $i < count($linker); $i++) {
         if ($i == count($linker) - 2) {
             $ovinger = getOvinger();
@@ -87,15 +87,15 @@ function getBruker() {
     $query = "SELECT email, navn, rolle FROM brukere WHERE brukerID=?";
     $statement = $con->prepare($query);
     $statement->bind_param("i", $brukerID);
-    $assoc = [];
+    $assoc = array();
     if ($statement->execute()) {
         $statement->bind_result($email, $navn, $rolle);
         $statement->fetch();
-        $assoc = [
+        $assoc = array(
             'email' => $email,
             'navn' => $navn,
             'rolle' => $rolle
-        ];
+        );
         $statement->close();
         disconnect($con);
         return $assoc;
@@ -224,7 +224,7 @@ function leverTilbakemelding() {
     if ($statement->execute()) {
         $statement->close();
         disconnect($con);
-        return "<meta http-equiv='refresh' content='0; url=./index.php' />";
+        return "<meta http-equiv='refresh' content='0; url=./_index.php' />";
     }
     $statement->close();
     disconnect($con);
@@ -233,8 +233,8 @@ function leverTilbakemelding() {
 
 function godkjennOving($brukerID, $ovingsID, $godkjent) {
     $con = connect();
-
-    $query = "UPDATE innleveringer SET godkjent=? WHERE brukerID=? AND ovingsID=?";
+    
+    $query = "UPDATE innleveringer SET godkjent=?, rettet=1 WHERE brukerID=? AND ovingsID=?";
     $statement = $con->prepare($query);
     $statement->bind_param("iii", $godkjent, $brukerID, $ovingsID);
     $statement->execute();
@@ -273,11 +273,11 @@ function getSpesifikkTilbakemelding($brukerTilVurdering, $ovingsID) {
     if ($statement->execute()) {
         $statement->bind_result($tilbakemelding, $godkjent, $nytteverdi);
         $statement->fetch();
-        $assoc = [
+        $assoc = array(
             'tilbakemelding' => $tilbakemelding,
             'godkjent' => $godkjent,
             'nytteverdi' => $nytteverdi
-        ];
+        );
         $statement->close();
         disconnect($con);
         return $assoc;
@@ -300,19 +300,19 @@ function getTilbakemelding($brukerID) {
 
     $statement = $con->prepare($query);
     $statement->bind_param("ii", $brukerID, $ovingsID);
-    $array = [NULL, NULL, NULL];
+    $array = array(NULL, NULL, NULL);
     if ($statement->execute()) {
         $statement->store_result();
         $statement->bind_result($brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding, $godkjent, $nytteverdi);
         for ($i = 0; $i < $statement->num_rows; $i++) {
             $statement->fetch();
-            $array[$i] = [
+            $array[$i] = array(
                 'brukerID' => $brukerID,
                 'ovingsID' => $ovingsID,
                 'vurderingsbruker' => $vurderingsbruker,
-                'tilbakemelding' => htmlspecialchars($tilbakemelding, ENT_SUBSTITUTE),
+                'tilbakemelding' => htmlspecialchars($tilbakemelding, 8),
                 'godkjent' => $godkjent,
-                'nytteverdi' => $nytteverdi];
+                'nytteverdi' => $nytteverdi);
         }
         $statement->close();
         disconnect($con);
@@ -322,7 +322,7 @@ function getTilbakemelding($brukerID) {
 
 function getTilbakemeldinger($ovingsID, $brukerID) {
     $con = connect();
-    $tilbakeMeldinger = [NULL, NULL, NULL];
+    $tilbakeMeldinger = array(NULL, NULL, NULL);
     $query = "SELECT brukerID FROM tilbakemeldinger WHERE vurderingsbruker=? AND ovingsID=?";
     $statement = $con->prepare($query);
     $statement->bind_param("ii", $brukerID, $ovingsID);
@@ -345,10 +345,10 @@ function getTilbakemeldinger($ovingsID, $brukerID) {
 
 function getAlleTilbakemeldinger() {
     $ovingArray = getOvinger();
-    $ovingMTilbakemelding = [];
+    $ovingMTilbakemelding = array();
 
     for ($index = 0; $index < count($ovingArray); $index++) {
-        $ovingMTilbakemelding[$index] = [$ovingArray[$index]['ovingsID']];
+        $ovingMTilbakemelding[$index] = array($ovingArray[$index]['ovingsID']);
         $tilbakemeldinger = getTilbakemeldinger($ovingArray[$index]['ovingsID'], $_SESSION['brukerID']);
         for ($index2 = 1; $index2 < 4; $index2++) {
             array_push($ovingMTilbakemelding[$index], $tilbakemeldinger[$index2 - 1]);
@@ -385,7 +385,7 @@ function getOvinger() {
     $query = "SELECT * FROM ovinger ORDER BY innleveringsfrist";
     $result = mysqli_query($con, $query);
     $antall = mysqli_num_rows($result);
-    $array = [];
+    $array = array();
     for ($i = 0; $i < $antall; $i++) {
         $assoc = mysqli_fetch_assoc($result);
         $array[$i] = $assoc;
@@ -416,7 +416,7 @@ function getOvingerInfo() {
     //$query = "SELECT * FROM ovinger ORDER BY innleveringsfrist";
     //$result = mysqli_query($con, $query);
     //$antall = mysqli_num_rows($result);
-    $array = [];
+    $array = array();
     for ($i = 0; $i < count($ovinger); $i++) {
         $ovingsID = $ovinger[$i]['ovingsID'];
         $statement1->execute();
@@ -427,11 +427,11 @@ function getOvingerInfo() {
         $statement2->store_result();
         $statement2->bind_result($antInnleveringer, $antGodkjente);
         $statement2->fetch();
-        $array[$i] = [
+        $array[$i] = array(
             'manglendeTilbakemelding' => $manglendeTilbakemelding,
             'antInnleveringer' => $antInnleveringer,
             'antGodkjente' => $antGodkjente
-        ];
+        );
     }
     //erstatte null verdier med 0:
     for ($i = 0; $i < count($array); $i++) {
@@ -468,18 +468,18 @@ function getBrukereOving($ovingsID) {
     $statement->bind_param("iii", $ovingsID, $ovingsID, $ovingsID);
     $statement->execute();
     $statement->store_result();
-    $array = [];
+    $array = array();
     $statement->bind_result($brukerID, $navn, $levert, $godkjent, $null, $gittTilbakemeldinger, $null, $fåttTilbakemeldinger, $null);
     for ($i = 0; $i < $statement->num_rows; $i++) {
         $statement->fetch();
-        $array[$i] = [
+        $array[$i] = array(
             'brukerID' => $brukerID,
             'navn' => $navn,
             'levert' => $levert,
             'gittTilbakemeldinger' => $gittTilbakemeldinger,
             'fåttTilbakemeldinger' => $fåttTilbakemeldinger,
             'godkjent' => $godkjent
-        ];
+        );
     }
     $statement->close();
     disconnect($con);
@@ -501,11 +501,11 @@ function getOving($ovingsID) {
         $statement->fetch();
         $statement->close();
         disconnect($con);
-        $assoc = [
+        $assoc = array(
             'navn' => $navn,
             'oppgavetekst' => $oppgavetekst,
             'innleveringsfrist' => $innleveringsfrist,
-            'obligatorisk' => $obligatorisk];
+            'obligatorisk' => $obligatorisk);
         return $assoc;
     }
 }
@@ -521,17 +521,17 @@ function getInnleveringer() {
 
     $statement = $con->prepare($query);
     $statement->bind_param("i", $brukerID);
-    $array = [];
+    $array = array();
 
     if ($statement->execute()) {
         $statement->store_result();
         $statement->bind_result($ovingsID, $brukerID_levert);
         for ($i = 0; $i < $statement->num_rows; $i++) {
             $statement->fetch();
-            $array[$i] = [
+            $array[$i] = array(
                 'ovingsID' => $ovingsID,
                 'brukerID_levert' => $brukerID_levert
-            ];
+            );
         }
     }
 
@@ -557,18 +557,18 @@ function getInnleveringerForVurdering($ovingsID) {
 
     $statement = $con->prepare($query);
     $statement->bind_param("iii", $brukerID, $brukerID, $ovingsID);
-    $array = [];
+    $array = array();
 
     if ($statement->execute()) {
         $statement->store_result();
         $statement->bind_result($ovingsID, $brukerID, $antallTilbakemeldinger);
         for ($i = 0; $i < $statement->num_rows; $i++) {
             $statement->fetch();
-            $array[$i] = [
+            $array[$i] = array(
                 'ovingsID' => $ovingsID,
                 'brukerID' => $brukerID,
                 'antallTilbakemeldinger' => $antallTilbakemeldinger
-            ];
+            );
         }
     }
 
@@ -589,11 +589,11 @@ function getInnlevering($ovingsID, $brukerID) {
         $statement->fetch();
         $statement->close();
         disconnect($con);
-        $assoc = [
-            'innlevering' => htmlspecialchars($innlevering, ENT_SUBSTITUTE),
+        $assoc = array(
+            'innlevering' => htmlspecialchars($innlevering, 8),
             'innleveringsdato' => $innleveringsdato,
             'rettet' => $rettet,
-            'godkjent' => $godkjent];
+            'godkjent' => $godkjent);
         return $assoc;
     }
 }

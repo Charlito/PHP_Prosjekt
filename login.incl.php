@@ -34,7 +34,7 @@ function login() {
     if ($statement->num_rows == 1) {
         $_SESSION['brukerID'] = $brukerID;
         if (disconnect($con) && $statement->close()) {
-            echo "<meta http-equiv='refresh' content='0; url=./index.php' />";
+            echo "<meta http-equiv='refresh' content='0; url=./_index.php' />";
             //header('Location: ./todo.php');
             exit();
         }
