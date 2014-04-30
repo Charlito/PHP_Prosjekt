@@ -15,8 +15,7 @@ sjekkOmAdmin();
 
         
         if (isset($_POST))
-            //TODO slettOving(key($_POST))
-            echo key($_POST);
+            slettOving(key($_POST));
         ?>
         <div id="wrapper">
             <h1>Vis oversikt</h1>

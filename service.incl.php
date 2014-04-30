@@ -6,6 +6,10 @@ include 'dbconnect.incl.php';
 
 date_default_timezone_set('Europe/Oslo');
 
+if (isset($_GET['logout'])) {
+    logout();
+}
+
 function sjekkOmAdmin() {
     $rolle = getRolle();
     if ($rolle != 1) {
@@ -30,13 +34,19 @@ function ensureLogin() {
     $_SESSION['sist_aktiv'] = time();
 }
 
+function logout() {
+    session_destroy();
+    session_unset();
+    echo "<meta http-equiv='refresh' content='0; url=./login.php'";
+}
+
 function adminMeny() {
     echo '<nav>';
     echo '<ul class="nav" id="nav">';
-    $headers = ['Registrer bruker', 'Legg til øving', 'Vis oversikt'];
-    $linker = ['registrerBruker', 'registrerOving', 'visOversikt'];
+    $headers = ['Registrer bruker', 'Legg til øving', 'Vis oversikt', 'Logg ut'];
+    $linker = ['registrerBruker', 'registrerOving', 'visOversikt', '?logout=1'];
     for ($i = 0; $i < count($linker); $i++) {
-        if ($i == count($linker) - 1) {
+        if ($i == count($linker) - 2) {
             $ovinger = getOvinger();
             echo "<li><a href='$linker[$i].php'>$headers[$i]</a><ul>";
             for ($j = 0; $j < count($ovinger); $j++) {
@@ -226,7 +236,7 @@ function godkjennOving($brukerID, $ovingsID, $godkjent) {
 
     $query = "UPDATE innleveringer SET godkjent=? WHERE brukerID=? AND ovingsID=?";
     $statement = $con->prepare($query);
-    $statement->bind_param("iii",$godkjent, $brukerID, $ovingsID);
+    $statement->bind_param("iii", $godkjent, $brukerID, $ovingsID);
     $statement->execute();
 
     if (disconnect($con) && $statement->close()) {
@@ -234,10 +244,8 @@ function godkjennOving($brukerID, $ovingsID, $godkjent) {
     }
 }
 
-function slettOving() {
+function slettOving($ovingsID) {
     $con = connect();
-
-    $ovingsID = $_GET['ovingsID'];
 
     $query = "DELETE FROM ovinger WHERE ovingsID=?";
 
@@ -287,7 +295,7 @@ function getTilbakemelding() {
     $ovingsID = $_SESSION['ovingsID'];
 
     $query = "SELECT brukerID, ovingsID, "
-            . "tilbakemelding, godkjent FROM tilbakemeldinger WHERE "
+            . "tilbakemelding, godkjent, nytteverdi FROM tilbakemeldinger WHERE "
             . "brukerID=? AND ovingsID=?";
 
     $statement = $con->prepare($query);
@@ -295,14 +303,15 @@ function getTilbakemelding() {
     $array = [NULL, NULL, NULL];
     if ($statement->execute()) {
         $statement->store_result();
-        $statement->bind_result($brukerID, $ovingsID, $tilbakemelding, $godkjent);
+        $statement->bind_result($brukerID, $ovingsID, $tilbakemelding, $godkjent, $nytteverdi);
         for ($i = 0; $i < $statement->num_rows; $i++) {
             $statement->fetch();
             $array[$i] = [
-                'brukerID' => $brukerID,
-                'ovingsID' => $ovingsID,
-                'tilbakemelding' => htmlspecialchars($tilbakemelding, ENT_SUBSTITUTE),
-                'godkjent' => $godkjent];
+            'brukerID' => $brukerID,
+            'ovingsID' => $ovingsID,
+            'tilbakemelding' => htmlspecialchars($tilbakemelding, ENT_SUBSTITUTE),
+            'godkjent' => $godkjent,
+            'nytteverdi' => $nytteverdi];
         }
         $statement->close();
         disconnect($con);
@@ -321,7 +330,11 @@ function getTilbakemeldinger($ovingsID, $brukerID) {
         $statement->bind_result($levertBruker);
         for ($i = 0; $i < $statement->num_rows; $i++) {
             $statement->fetch();
-            $tilbakeMeldinger[$i] = $levertBruker;
+            if ($i > 2) {
+                array_push($tilbakeMeldinger, $levertBruker);
+            } else {
+                $tilbakeMeldinger[$i] = $levertBruker;
+            }
         }
     }
     $statement->close();
@@ -341,6 +354,25 @@ function getAlleTilbakemeldinger() {
         }
     }
     return $ovingMTilbakemelding;
+}
+
+function lagreNytteverdi($ovingsID, $tilbakemeldinger) {
+    $con = connection();
+
+    $brukerID = $_SESSION['brukerID'];
+
+    $query = "UPDATE tilbakemeldinger SET nytteverdi=? WHERE brukerID=? AND ovingsID=? AND vurderingsbruker=?";
+    $statement = $con->prepare($query);
+    $statement->bind_param("iiii", $nytteverdi, $brukerID, $ovingsID, $vurderingsbruker);
+    for ($i = 0; $i < count($vurderingsbruker); $i++) {
+        $nytteverdi = $_POST['nytteverdi' . $i];
+        if ($nytteverdi != 0) {
+            $vurderingsbruker = $tilbakemeldinger[$i]['vurderingsbruker'];
+            $statement->execute();
+        }
+    }
+    $statement->close();
+    disconnect($con);
 }
 
 function getOvinger() {
