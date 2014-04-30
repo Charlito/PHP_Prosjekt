@@ -83,6 +83,23 @@
                         . "<option value=3>Meget nyttig</option>"
                         . "</select></td>"
                         . "</tr>";
+                    } else {
+                        switch ($tilbakemeldinger[$i]['nytteverdi']){
+                            case 0:
+                                $nytteverdi = "Ikke oppgitt";
+                                break;
+                            case 1:
+                                $nytteverdi = "Lite nyttig";
+                                break;
+                            case 2:
+                                $nytteverdi = "Nyttig";
+                                break;
+                            case 3:
+                                $nytteverdi = "Meget nyttig";
+                                break;
+                        }
+                        
+                        echo "<td>$nytteverdi</td>";
                     }
                 } else {
                     echo "<tr><td colspan='3'>Ingen tilbakemelding</td></tr>";
