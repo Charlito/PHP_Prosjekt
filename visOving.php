@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="stilark.css" />
         <?php
         include 'service.incl.php';
+        echo ensureLogin();
         $ovingsID = $_GET['ovingsID'];
         $oving = getOving($ovingsID);
         echo "<title>" . $oving['navn'] . "</title>";

@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="stilark.css" />
         <?php
         include 'service.incl.php';
+        echo ensureLogin();
         ?>
     </head>
     <body>

@@ -11,11 +11,7 @@ include 'login.incl.php';
     <body>
         <div id="wrapper">
             <h1>Logg inn</h1>
-            <?php
-            if (isset($_GET['error'])) {
-                echo "<strong>" . $_GET['error'] . "</strong>";
-            }
-            ?>
+            
             <form method="POST" action="login.php">
                 <label for="epost">Epost: </label>
                 <input type="email" name="epost" id="epost"><br>
@@ -26,6 +22,10 @@ include 'login.incl.php';
                 <input type="submit" value="Logg inn" name="login">
             </form>
             <?php
+            if (isset($_SESSION['error'])) {
+                echo $_SESSION['error'];
+                session_unset();
+            }
             if (isset($_POST['login'])) {
                 login();
             }

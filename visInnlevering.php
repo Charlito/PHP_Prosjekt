@@ -6,6 +6,7 @@
         <title>Innlevering</title>
         <?php
         include 'service.incl.php';
+        echo ensureLogin();
         $ovingsID = $_GET['ovingsID'];
         $_SESSION['ovingsID'] = $ovingsID;
         $oving = getOving($ovingsID);

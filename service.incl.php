@@ -13,6 +13,23 @@ function sjekkOmAdmin() {
     }
 }
 
+function ensureLogin() {
+    if (isset($_SESSION['sist_aktiv']) && (time() - $_SESSION['sist_aktiv'] > 3600)) {
+        session_destroy();
+        session_unset();
+        session_start();
+        $_SESSION['error'] = "<div class='info'><p>Du var inaktiv for lenge, sesjonen er avsluttet.</p></div>";
+        return "<meta http-equiv='refresh' content='0; url=./login.php'";
+    }
+
+    if (!isset($_SESSION['brukerID'])) {
+        $_SESSION['error'] = "<div class='info'><p>Vennligst logg inn.</p></div>";
+        return "<meta http-equiv='refresh' content='0; url=./login.php'";
+    }
+    
+    $_SESSION['sist_aktiv'] = time();
+}
+
 function adminMeny() {
     echo '<nav>';
     echo '<ul class="nav" id="nav">';
@@ -454,7 +471,7 @@ function getInnlevering($ovingsID, $brukerID) {
         $statement->close();
         disconnect($con);
         $assoc = [
-            'innlevering' => $innlevering,
+            'innlevering' => htmlspecialchars($innlevering, ENT_SUBSTITUTE),
             'innleveringsdato' => $innleveringsdato,
             'godkjent' => $godkjent];
         return $assoc;

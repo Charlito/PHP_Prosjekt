@@ -4,7 +4,10 @@
         <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
         <title>Innlevering</title>
         <link rel="stylesheet" href="stilark.css" />
-        <?php include 'service.incl.php'; ?>
+        <?php
+        include 'service.incl.php';
+        echo ensureLogin();
+        ?>
     </head>
     <body>
         <div id="wrapper">

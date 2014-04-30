@@ -12,6 +12,7 @@ sjekkOmAdmin();
     <body>
         <?php
         adminMeny();
+        echo ensureLogin();
         ?>
         <div id="wrapper">
             <h1>Registrering</h1>

@@ -8,6 +8,7 @@ and open the template in the editor.
 include './service.incl.php';
 
 //sjekke om brukeren er lærer, hvis ikke -> redirect til index
+echo ensureLogin();
 sjekkOmAdmin();
 ?>
 
