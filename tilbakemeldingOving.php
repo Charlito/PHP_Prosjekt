@@ -33,7 +33,7 @@
             $_SESSION['ovingsID'] = $ovingsID;
 
             if ($brukerTilVurdering != null || $brukerTilVurdering != '') {
-                echo "<h1>Retting av medstudent nr $brukerTilVurdering, " . $oving['navn'] . "</h1>";
+                echo "<h1>Retting av student nr $brukerTilVurdering, " . $oving['navn'] . "</h1>";
             } else {
                 echo "<h1>Retting av " . $oving['navn'] . "</h1>";
             }

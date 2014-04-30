@@ -227,8 +227,27 @@ function godkjennOving() {
     $statement->execute();
 
     if (disconnect($con) && $statement->close()) {
-        return "<div id=class'success'><p>Øvingen er nå godkjent.</p></div>";
+        return "<div class='success'><p>Øvingen er nå godkjent.</p></div>";
     }
+}
+
+function slettOving() {
+    $con = connect();
+    
+    $ovingsID = $_GET['ovingsID'];
+    
+    $query = "DELETE FROM ovinger WHERE ovingsID=?";
+    
+    $statement = $con->prepare($query);
+    $statement->bind_param("i", $ovingsID);
+    if ($statement->execute()) {
+        $statement->close();
+        disconnect($con);
+        return "<div class='success'><p>Øvingen er ble slettet.</p></div>";
+    }
+    $statement->close();
+    disconnect($con);
+    return "<div class='error'><p>Øvingen kunne ikke slettes.</p></div>";
 }
 
 function getSpesifikkTilbakemelding($brukerTilVurdering, $ovingsID) {

@@ -6,13 +6,18 @@
         <link rel="stylesheet" href="stilark.css" />
         <?php
         include 'service.incl.php';
+        $rolle = getRolle();
         ?>
     </head>
     <body>
         <div id="wrapper">
             <?php
             echo ensureLogin();
-            echo "<meta http-equiv='refresh' content='0; url=./todo.php' />";
+            if ($rolle == 1) {
+                echo "<meta http-equiv='refresh' content='0; url=./adminSide.php' />";
+            } else {
+                echo "<meta http-equiv='refresh' content='0; url=./todo.php' />";
+            }
             ?>
         </div>
     </body>

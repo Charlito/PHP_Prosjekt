@@ -7,6 +7,7 @@ function connect() {
     $db_name = "MOOC";
     $con = mysqli_connect($host, $user, $pw) or die("Cannot connect to host: " . mysqli_error($con));
     mysqli_select_db($con, $db_name) or die("Cannot connect to Database: " . mysqli_error($con));
+    mysqli_set_charset($con, 'utf-8');
     return $con;
 }
 
