@@ -21,16 +21,25 @@
             $brukerID = $_SESSION['brukerID'];
             $ovingsID = $_GET['ovingsID'];
             $oving = getOving($ovingsID);
+            echo $ovingsID;
             $innleveringer = getInnleveringerForVurdering($ovingsID);
+            print_r($innleveringer);
             if ($rolle == 0) {
                 $brukerTilVurdering = $innleveringer[0]['brukerID'];
+                $_SESSION['brukerTilVurdering'] = $brukerTilVurdering;
             } else {
-                $brukerTilVurdering = $_GET['brukerTilVurdering'];
+                if (isset($_GET['brukerTilVurdering'])) {
+                    $brukerTilVurdering = $_GET['brukerTilVurdering'];
+                    $_SESSION['brukerTilVurdering'] = $brukerTilVurdering;
+                }
             }
+            
+            
+            $_SESSION['ovingsID'] = $ovingsID;
+
             $innlevering = getInnlevering($innleveringer[0]['ovingsID'], $brukerTilVurdering);
 
-            $_SESSION['brukerTilVurdering'] = $brukerTilVurdering;
-            $_SESSION['ovingsID'] = $ovingsID;
+
 
             if ($brukerTilVurdering != null || $brukerTilVurdering != '') {
                 echo "<h1>Retting av student nr $brukerTilVurdering, " . $oving['navn'] . "</h1>";

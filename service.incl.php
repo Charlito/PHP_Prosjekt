@@ -214,7 +214,7 @@ function leverTilbakemelding() {
     if ($statement->execute()) {
         $statement->close();
         disconnect($con);
-        return "<meta http-equiv='refresh' content='0; url=./todo.php' />";
+        return "<meta http-equiv='refresh' content='0; url=./index.php' />";
     }
     $statement->close();
     disconnect($con);
@@ -420,7 +420,7 @@ function getOvingerInfo() {
 function getBrukereOving($ovingsID) {
     $con = connect();
     $query = "select * from("
-            . "(select brukerID, navn from brukere) as A "
+            . "(select brukerID, navn from brukere where rolle=0) as A "
             . "left outer join "
             . "(select count(*) as levert, godkjent, brukerID from innleveringer where ovingsID=? group by brukerID) as B on A.brukerID = B.brukerID  "
             . "left outer join "
