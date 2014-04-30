@@ -294,7 +294,7 @@ function getTilbakemelding($brukerID) {
     //$brukerID = $_SESSION['brukerID'];
     $ovingsID = $_SESSION['ovingsID'];
 
-    $query = "SELECT brukerID, ovingsID, "
+    $query = "SELECT brukerID, ovingsID, vurderingsbruker, "
             . "tilbakemelding, godkjent, nytteverdi FROM tilbakemeldinger WHERE "
             . "brukerID=? AND ovingsID=?";
 
@@ -303,15 +303,16 @@ function getTilbakemelding($brukerID) {
     $array = [NULL, NULL, NULL];
     if ($statement->execute()) {
         $statement->store_result();
-        $statement->bind_result($brukerID, $ovingsID, $tilbakemelding, $godkjent, $nytteverdi);
+        $statement->bind_result($brukerID, $ovingsID, $vurderingsbruker, $tilbakemelding, $godkjent, $nytteverdi);
         for ($i = 0; $i < $statement->num_rows; $i++) {
             $statement->fetch();
             $array[$i] = [
-            'brukerID' => $brukerID,
-            'ovingsID' => $ovingsID,
-            'tilbakemelding' => htmlspecialchars($tilbakemelding, ENT_SUBSTITUTE),
-            'godkjent' => $godkjent,
-            'nytteverdi' => $nytteverdi];
+                'brukerID' => $brukerID,
+                'ovingsID' => $ovingsID,
+                'vurderingsbruker' => $vurderingsbruker,
+                'tilbakemelding' => htmlspecialchars($tilbakemelding, ENT_SUBSTITUTE),
+                'godkjent' => $godkjent,
+                'nytteverdi' => $nytteverdi];
         }
         $statement->close();
         disconnect($con);
@@ -357,22 +358,25 @@ function getAlleTilbakemeldinger() {
 }
 
 function lagreNytteverdi($ovingsID, $tilbakemeldinger) {
-    $con = connection();
+    $con = connect();
 
     $brukerID = $_SESSION['brukerID'];
 
     $query = "UPDATE tilbakemeldinger SET nytteverdi=? WHERE brukerID=? AND ovingsID=? AND vurderingsbruker=?";
     $statement = $con->prepare($query);
     $statement->bind_param("iiii", $nytteverdi, $brukerID, $ovingsID, $vurderingsbruker);
-    for ($i = 0; $i < count($vurderingsbruker); $i++) {
-        $nytteverdi = $_POST['nytteverdi' . $i];
-        if ($nytteverdi != 0) {
-            $vurderingsbruker = $tilbakemeldinger[$i]['vurderingsbruker'];
-            $statement->execute();
+    for ($i = 0; $i < count($tilbakemeldinger); $i++) {
+        if (isset($_POST['nytteverdi' . $i])) {
+            $nytteverdi = $_POST['nytteverdi' . $i];
+            if ($nytteverdi != 0) {
+                $vurderingsbruker = $tilbakemeldinger[$i]['vurderingsbruker'];
+                $statement->execute();
+            }
         }
     }
     $statement->close();
     disconnect($con);
+    return "<meta http-equiv='refresh' content='0; url=./todo.php'>";
 }
 
 function getOvinger() {
